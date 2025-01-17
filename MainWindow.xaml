@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Window
+    x:Class="Resolved.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Resolved"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Title="resolved.ce">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <SelectorBar Name="MainSelectorBar" Grid.Column="0" SelectionChanged="MainSelectorBar_SelectionChanged" FontFamily="Outfit" IsEnabled="False">
+                <SelectorBarItem Text="resolved.ce" TabIndex="0" ToolTipService.ToolTip="Search problems" FontFamily="Outfit"/>
+                <SelectorBarItem Text="Level" TabIndex="1" FontFamily="Outfit"/>
+                <SelectorBarItem Text="Sprout" TabIndex="2" FontFamily="Outfit"/>
+                <SelectorBarItem Text="Class" TabIndex="3" FontFamily="Outfit"/>
+                <SelectorBarItem Text="Tag" TabIndex="4" FontFamily="Outfit"/>
+                <SelectorBarItem Text="Bookmark" TabIndex="5" FontFamily="Outfit"/>
+                <SelectorBarItem Text="Setting" TabIndex="6" ToolTipService.ToolTip="Change settings" FontFamily="Outfit"/>
+            </SelectorBar>
+            <Border x:Name="TitleBarBorder" Grid.Column="1" />
+        </Grid>
+        <Frame Grid.Row="1" x:Name="MainFrame"/>
+    </Grid>
+</Window>

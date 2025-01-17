@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<UserControl
+    x:Class="Resolved.Controls.Settings.SolvedDataOptions"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Resolved.Controls.Settings"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="using:CommunityToolkit.WinUI.Controls"
+    mc:Ignorable="d">
+    <ui:SettingsExpander Header="BOJ/solved.ac data management" Description="Manage problems and user data." FontFamily="Outfit" IsExpanded="True">
+        <ui:SettingsExpander.Items>
+            <ui:SettingsCard Header="Problems download" Description="Download all problems from BOJ/solved.ac. Then overwrite and update." FontFamily="Outfit">
+                <local:DownloadOption/>
+            </ui:SettingsCard>
+            <ui:SettingsCard x:Name="LastWrtieTimeCard" Header="Last problems downloaded date" Description="Exclude download failed." Content="{x:Bind LastWriteTime}" FontFamily="Outfit"/>
+            <ui:SettingsCard x:Name="CurrentUserCard" Header="Current user" Description="When you select a user, the app shows their related information as if they were logged in. For instance, solved problems will appear in green text." Content="{x:Bind CurrentUesr, Mode=OneWay}" FontFamily="Outfit"/>
+            <ui:SettingsCard Header="Handle users data" Description="Download special users from solved.ac. Then overwrite and update." FontFamily="Outfit">
+                <Button FontFamily="Outfit" Content="Move to management page" x:Name="UserDownloadButton" Click="UserDownloadButton_Click" ToolTipService.ToolTip="You can handle user data such as seraching, adding, downloading, deleting, etc."/>
+            </ui:SettingsCard>
+            <ui:SettingsCard Header="Data save path" Description="{x:Bind DataSavePath}" FontFamily="Outfit">
+                <Button Content="Open with file explorer" Click="OpenSaveFolderWithFileExplorer" FontFamily="Outfit" ToolTipService.ToolTip="Open folder where all data by resolved.ce is stored."/>
+            </ui:SettingsCard>
+            <ui:SettingsCard Header="Remove data" Description="If you encounter an error while exploring, maybe this feature can help you.">
+                <local:RemoveOption/>
+            </ui:SettingsCard>
+        </ui:SettingsExpander.Items>
+    </ui:SettingsExpander>
+</UserControl>

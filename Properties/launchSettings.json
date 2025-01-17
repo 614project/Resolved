@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "Resolved (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "Resolved (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}

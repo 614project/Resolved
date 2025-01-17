@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<UserControl
+    x:Class="Resolved.Controls.UserListView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Resolved.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:re="using:Resolved.Scripts"
+    mc:Ignorable="d">
+
+    <Grid HorizontalAlignment="Stretch">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="Sort by " Grid.Column="0" VerticalAlignment="Center" Margin="0,0,8,0" Foreground="DarkSlateGray"/>
+            <SelectorBar Grid.Column="1" Name="SortBySelector" SelectionChanged="SortBySelector_SelectionChanged" FontFamily="Outfit">
+                <SelectorBarItem Text="Rating" TabIndex="0" IsSelected="True" ToolTipService.ToolTip="Sort by rating." FontFamily="Outfit"/>
+                <SelectorBarItem Text="Solved" TabIndex="1" ToolTipService.ToolTip="Sort by count of solved problems." FontFamily="Outfit"/>
+                <SelectorBarItem Text="Name" TabIndex="2" ToolTipService.ToolTip="Sort by handle." FontFamily="Outfit"/>
+                <SelectorBarItem Text="Class" TabIndex="3" ToolTipService.ToolTip="Sort by class." FontFamily="Outfit"/>
+                <SelectorBarItem Text="Random" TabIndex="4" ToolTipService.ToolTip="Just shuffle." FontFamily="Outfit"/>
+                <SelectorBarItem Text="Ascending" TabIndex="5" ToolTipService.ToolTip="Set sort order." FontFamily="Outfit" Icon="Sort"/>
+            </SelectorBar>
+            <ContentPresenter Grid.Column="3" Content="{x:Bind Side}"/>
+        </Grid>
+        <ListView Grid.Row="1" Name="UsersListView" ItemsSource="{x:Bind UserCollection}" SelectionChanged="UsersListView_SelectionChanged" Background="#10ffffff" CornerRadius="4" HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch">
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="re:SolvedUser">
+                    <Grid x:Name="UserInfoBar" HorizontalAlignment="Stretch" ColumnSpacing="16">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="50"/>
+                            <ColumnDefinition Width="140"/>
+                            <ColumnDefinition Width="140"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="{x:Bind TierAndRating, Mode=OneWay}" Foreground="{x:Bind GetTierColor}" Grid.Column="0" FontFamily="Outfit" VerticalAlignment="Center"/>
+                        <TextBlock Text="{x:Bind Handle, Mode=OneWay}" Grid.Column="1" Foreground="DarkSlateGray" FontFamily="Outfit" VerticalAlignment="Center"/>
+                        <TextBlock Text="{x:Bind Bio, Mode=OneWay}" Grid.Column="2" FontFamily="SUIT" VerticalAlignment="Center"/>
+                        <TextBlock Text="{x:Bind ClassText, Mode=OneWay}" Grid.Column="3" FontFamily="Outfit" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        <TextBlock Text="{x:Bind MaxStreakText, Mode=OneWay}" Grid.Column="4" FontFamily="Outfit" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        <TextBlock x:Name="DownloadStatusTextBlock" DataContextChanged="DownloadStatusTextBlock_DataContextChanged" Text="{x:Bind LastDownloadMessage}" Grid.Column="5" FontFamily="Outfit" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Grid>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </Grid>
+</UserControl>

@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<UserControl
+    x:Class="Resolved.Controls.Settings.BackdropOption"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Resolved.Controls.Settings"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="using:CommunityToolkit.WinUI.Controls"
+    mc:Ignorable="d">
+    <ui:SettingsCard Header="Window Backdrop" Description="Select backdrop you want. It will be apply direct without restart." FontFamily="Outfit">
+        <ComboBox FontFamily="Outfit" x:Name="Backdrops" SelectionChanged="BackdropsChanged" Loaded="BackdropsLoaded">
+            <ComboBoxItem Content="None" ToolTipService.ToolTip="Backdrop nothing, use solid background color." FontFamily="Outfit"/>
+            <ComboBoxItem Content="Acrylic" ToolTipService.ToolTip="Slightly translucent texture." FontFamily="Outfit"/>
+            <ComboBoxItem Content="Mica" ToolTipService.ToolTip="Display opaque background." FontFamily="Outfit"/>
+            <ComboBoxItem Content="Mica Alt" ToolTipService.ToolTip="More translucent than Mica." FontFamily="Outfit"/>
+        </ComboBox>
+    </ui:SettingsCard>
+</UserControl>

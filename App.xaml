@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Application
+    x:Class="Resolved.App"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ui="using:CommunityToolkit.WinUI.Controls"
+    xmlns:local="using:Resolved">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
+                <!-- Other merged dictionaries here -->
+            </ResourceDictionary.MergedDictionaries>
+            <!-- Other app resources here -->
+            <FontFamily x:Key="Outfit">ms-appx:///Assets/Fonts/Outfit.ttf#Outfit</FontFamily>
+            <FontFamily x:Key="SUIT">ms-appx:///Assets/Fonts/SUIT.ttf#SUIT</FontFamily>
+
+            <Style TargetType="TextBlock">
+                <Setter Property="FontFamily" Value="Outfit"/>
+            </Style>
+            <Style TargetType="TextBox">
+                <Setter Property="FontFamily" Value="Outfit"/>
+            </Style>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

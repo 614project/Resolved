@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<UserControl
+    x:Class="Resolved.Controls.UserSearch"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Resolved.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid RowDefinitions="Auto, Auto">
+        <Image x:Name="Background" Source="ms-appx:///Assets/Images/default.png" HorizontalAlignment="Stretch" Height="400" Stretch="UniformToFill" Grid.Row="0"/>
+        <Grid Grid.Row="1" MaxWidth="1000" HorizontalAlignment="Stretch" ColumnDefinitions="Auto, *" Margin="0,8,0,0">
+            <PersonPicture x:Name="Profile" DisplayName="?" Width="120" Height="120" Grid.Column="0"/>
+            <Grid Grid.Column="1" HorizontalAlignment="Stretch" RowDefinitions="Auto, Auto, Auto, Auto" VerticalAlignment="Center">
+                <AutoSuggestBox x:Name="Handle" PlaceholderText="Enter username." VerticalAlignment="Bottom" Grid.Row="0" FontFamily="Outfit" ItemsSource="{x:Bind SuggestKeywords, Mode=OneWay}" TextChanged="Handle_TextChanged" />
+                <TextBlock x:Name="Bio" VerticalAlignment="Top" Grid.Row="1"/>
+                <TextBlock x:Name="Tier" Text="Unranked 0" FontSize="20" Grid.Row="2" FontFamily="Outfit" VerticalAlignment="Bottom" />
+                <ProgressBar x:Name="RatingBar" Grid.Row="3" HorizontalAlignment="Stretch" Value="10"/>
+            </Grid>
+        </Grid>
+    </Grid>
+</UserControl>
