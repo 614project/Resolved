@@ -1,20 +1,30 @@
 # resolved.ce
-offline BOJ/solved.ac reader
+Offline BOJ/solved.ac reader  
+(Developing yet; Not all features are implemented)
 <img src='./banner.png'/>
 
 ## Available
-- search problems
-- download problems
-- sorting
-- light/dark theme and acrylic/mica backdrop
+- Search problems
+- Download problems
+- Sorting problems/users
+- Light/Dark theme and Acrylic/Mica backdrop
+- Bookmark
 
 ## Unstable
-- download user
-- ac/wa problem coloring
+- Download user
+- Sometime wrong ac/wa coloring
 
-## Not working
+## No working or implement
+- Download BOJ website for offline
 - Level tab
 - Sprout tab
 - Class tab
 - Tag tab
-- Bookmark tab
+
+## Required
+- Windows 10 or higher
+- .NET 8 Runtime (or SDK if you want to build)
+
+## Naming
+First considered name is 'unsolved.wa' but it's already used by other project.  
+So, I changed it to 'resolved.ce'.  
