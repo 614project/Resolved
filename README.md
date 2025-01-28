@@ -25,6 +25,10 @@ Offline BOJ/solved.ac reader
 - Windows 10 or higher
 - .NET 8 Runtime (or SDK if you want to build)
 
+## Dependency library
+- [WinUI 3](https://github.com/microsoft/microsoft-ui-xaml)
+- [acNET](https://github.com/614project/acNET)
+
 ## Naming
 First considered name is 'unsolved.wa' but it's already used by other project.  
 So, I changed it to 'resolved.ce'.  
