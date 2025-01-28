@@ -22,7 +22,7 @@ namespace Resolved.Pages
         public UserManagementPage()
         {
             this.InitializeComponent();
-            this.MyUserListView.Update(Solved.Users.Values.ToArray());
+            this.MyUserListView.Update(SolvedInfo.Users.Values.ToArray());
             this.AddUser.MinWidth = this.AddUser.ActualWidth;
             this.Loaded += this.UserManagementPage_Loaded;
             this.Unloaded += this.UserManagementPage_Unloaded;
@@ -62,7 +62,7 @@ namespace Resolved.Pages
             bool alreadyExist = false;
             if (predictAddUser != null)
             {
-                if (alreadyExist = Solved.Users.ContainsKey(predictAddUser.handle))
+                if (alreadyExist = SolvedInfo.Users.ContainsKey(predictAddUser.handle))
                     predictAddUser = null;
             }
 
@@ -78,7 +78,7 @@ namespace Resolved.Pages
         private void UserManagementPage_Unloaded(object sender , RoutedEventArgs e)
         {
             MainWindow.SelectorBar.Items.Remove(mySelectBarItem);
-            Solved.UsersSave();
+            SolvedInfo.UsersSave();
         }
 
         private void UserManagementPage_Loaded(object sender , RoutedEventArgs e)
@@ -94,7 +94,7 @@ namespace Resolved.Pages
         }
 
         Debouncer<string,RankedUser?> debouncer = new(
-            name => Solved.API.GetUser(name).Result
+            name => SolvedInfo.API.GetUser(name).Result
         );
         RankedUser? predictAddUser = null;
         private void AddUser_Click(object sender , RoutedEventArgs e)
@@ -102,7 +102,7 @@ namespace Resolved.Pages
             if (predictAddUser == null)
                 return;
             SolvedUser solvedUser = new(predictAddUser);
-            Solved.Users.Add(solvedUser.Handle, solvedUser);
+            SolvedInfo.Users.Add(solvedUser.Handle, solvedUser);
             UpdateUserList(solvedUser.Handle);
             Debouncer_OnResult(null , predictAddUser);
             DispatcherQueue.TryEnqueue(solvedUser.StartDownload);
@@ -118,7 +118,7 @@ namespace Resolved.Pages
             {
                 SearchStatus.Text = string.Empty;
                 SearchStatus.Visibility = Visibility.Collapsed;
-                MyUserListView.Update(Solved.Users.Values.ToArray());
+                MyUserListView.Update(SolvedInfo.Users.Values.ToArray());
                 return;
             }
 
@@ -127,7 +127,7 @@ namespace Resolved.Pages
             debouncer.Current = handle;
             UpdateUserList(handle);
         }
-        private void UpdateUserList(string handle) => MyUserListView.Update(Solved.Users.Values.Where(user => user.Handle.Contains(handle)).ToArray());
+        private void UpdateUserList(string handle) => MyUserListView.Update(SolvedInfo.Users.Values.Where(user => user.Handle.Contains(handle)).ToArray());
         private void ActionButtonsSetup()
         {
             bool exist = nowUser != null;
@@ -156,7 +156,7 @@ namespace Resolved.Pages
         private void RemoveButton_Click(object sender , RoutedEventArgs e)
         {
             if (nowUser == null) return;
-            Solved.Users.Remove(nowUser.Handle);
+            SolvedInfo.Users.Remove(nowUser.Handle);
             if (Configuration.CurrentUser?.Handle == nowUser.Handle)
             {
                 Configuration.Config.currentUser = null;

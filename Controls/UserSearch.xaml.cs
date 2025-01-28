@@ -40,7 +40,7 @@ namespace Resolved.Controls
         private ObservableCollection<string> SuggestKeywords { get; } = new();
         private async void Handle_TextChanged(AutoSuggestBox sender , AutoSuggestBoxTextChangedEventArgs args)
         {
-            (var suggest, _) = await Solved.API.GetSearchAutoCompleteAsync(sender.Text);
+            (var suggest, _) = await SolvedInfo.API.GetSearchAutoCompleteAsync(sender.Text);
             if (suggest != null)
             {
                 SuggestKeywords.Clear();
@@ -50,7 +50,7 @@ namespace Resolved.Controls
                 }
             }
 
-            (var info, _) = await Solved.API.GetUserAsync(Handle.Text.ToLower());
+            (var info, _) = await SolvedInfo.API.GetUserAsync(Handle.Text.ToLower());
             if (info != null)
             {
                 DispatcherQueue.TryEnqueue(() => {
@@ -67,7 +67,7 @@ namespace Resolved.Controls
                     RatingBar.Foreground = color;
                 });
 
-                (var background, _) = await Solved.API.GetBackgroundAsync(info.backgroundId);
+                (var background, _) = await SolvedInfo.API.GetBackgroundAsync(info.backgroundId);
                 DispatcherQueue.TryEnqueue(() => {
                     if (background == null)
                         Background.Source = null;

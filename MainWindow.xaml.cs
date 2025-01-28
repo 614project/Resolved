@@ -46,6 +46,7 @@ namespace Resolved
         private void MainWindow_Closed(object sender , WindowEventArgs args)
         {
             Configuration.Save();
+            SolvedInfo.BookmarkSave();
         }
 
         private void MainSelectorBar_SelectionChanged(SelectorBar sender , SelectorBarSelectionChangedEventArgs args)
@@ -53,9 +54,11 @@ namespace Resolved
             int? index = sender.SelectedItem?.TabIndex;
             if (index == null || index > 6) return;
             MainFrame.Navigate(index switch {
-                2 => typeof(TestPage),
+                0 => typeof(SearchPage),
+                //2 => typeof(TestPage),
+                5 => typeof(BookmarkPage),
                 6 => typeof(SettingPage),
-                _ => typeof(SearchPage)
+                _ => typeof(NoImplementedPage)
             });
         }
     }

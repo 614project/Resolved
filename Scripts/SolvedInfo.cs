@@ -13,13 +13,14 @@ using static Resolved.Scripts.JsonManager;
 
 namespace Resolved.Scripts;
 
-static class Solved
+static class SolvedInfo
 {
     public static acAPI API { get; } = new();
-    public static List<TaggedProblem> Problems = [];
+    public static Dictionary<int, TaggedProblem> Problems = [];
     public static Dictionary<string,SolvedUser> Users = [];
     public static List<(int[] full, int[] essential, ClassInfo info)> Classis = [];
     public static Stats Stats = new();
+    public static HashSet<int> Bookmarks = [];
 
     public static DateTime? GetLastWriteTime()
     {
@@ -46,6 +47,9 @@ static class Solved
 
         OnLodingEvent?.Invoke(null , "loading user data");
         TryRead(ref Users , "users.json");
+
+        OnLodingEvent?.Invoke(null , "loading bookmark data");
+        TryRead(ref Bookmarks , "bookmarks.json");
     }
     public static void ProblemsSave()
     {
@@ -56,6 +60,10 @@ static class Solved
     public static void UsersSave()
     {
         Write(Users , "users.json");
+    }
+    public static void BookmarkSave()
+    {
+        Write(Bookmarks , "bookmarks.json");
     }
     public static event EventHandler<double>? OnProgressChanged = null;
     public static event EventHandler<Exception?>? OnDownloadEnd = null;
@@ -82,12 +90,15 @@ static class Solved
         }
     }
 
-    private static async Task<List<TaggedProblem>> DownloadProblems(Stats stat)
+    private static async Task<Dictionary<int,TaggedProblem>> DownloadProblems(Stats stat)
     {
-        List<TaggedProblem> downloads = new(capacity: (int)stat.problemCount * 2);
+        Dictionary<int, TaggedProblem> downloads = new(capacity: (int)stat.problemCount * 2);
         for (int id = 1000 ; downloads.Count < stat.problemCount ; id += 100)
         {
-            downloads.AddRange((await API.GetProblemListAsync(string.Join(',' , Enumerable.Range(id , 100)))).GetResultOrThrow());
+            foreach(var problem in (await API.GetProblemListAsync(string.Join(',' , Enumerable.Range(id , 100)))).GetResultOrThrow())
+            {
+                downloads.Add(problem.problemId , problem);
+            }
             OnProgressChanged?.Invoke(null , downloads.Count / (double)stat.problemCount * 100d);
             Thread.Sleep(1);
         }
@@ -109,16 +120,20 @@ static class Solved
     {
         Problems.Clear();
         Classis.Clear();
+        Bookmarks.Clear();
         Stats = new();
 
         TryDelete("problems.json");
         TryDelete("classis.json");
         TryDelete("stats.json");
+        TryDelete("bookmarks.json");
     }
 
     public static void RemoveUsers()
     {
         Users.Clear();
         UsersSave();
+
+        Configuration.Config.currentUser = null;
     }
 }

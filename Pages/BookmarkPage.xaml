@@ -1,6 +1,6 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Page
-    x:Class="Resolved.Pages.SearchPage"
+    x:Class="Resolved.Pages.BookmarkPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Resolved.Pages"
@@ -8,7 +8,6 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ce="using:Resolved.Controls"
     mc:Ignorable="d">
-    
     <Grid HorizontalAlignment="Stretch" Margin="20">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -16,12 +15,11 @@
         </Grid.RowDefinitions>
         <Grid Grid.Row="0">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <ce:ResolvedIcon Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Top" />
-            <!--<AutoSuggestBox PlaceholderText="Search" Grid.Column="1" Margin="20,0" VerticalAlignment="Center" x:Name="SearchBox" TextChanged="SearchBox_TextChanged" FontFamily="SUIT" ToolTipService.ToolTip="Enter problems you want to search for."/>-->
-        </Grid>
-        <ce:ProblemListView Grid.Row="2" x:Name="ProblemList" Loaded="ProblemList_Loaded" />
+            <TextBlock FontFamily="Outfit" Text="Bookmarks" FontSize="20" Grid.Column="0"/>
+        </Grid> 
+        <ce:ProblemListView x:Name="ProblemList" Loaded="ProblemList_Loaded" Grid.Row="1"/>
     </Grid>
 </Page>

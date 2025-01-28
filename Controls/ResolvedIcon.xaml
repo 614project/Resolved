@@ -8,12 +8,12 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Grid Grid.Column="1">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
-        <TextBlock Text="resolved.ce" FontSize="26" Grid.Row="0" HorizontalAlignment="Left" />
-        <TextBlock Text="Offline BOJ/solved.ac explorer" Foreground="Gray" Grid.Row="1" FontSize="14"/>
+    <Grid Grid.Column="1" HorizontalAlignment="Left">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <TextBlock Text="resolved.ce" FontSize="20" Grid.Column="0" HorizontalAlignment="Left" />
+        <TextBlock Text="Offline BOJ/solved.ac explorer" Foreground="DarkSlateGray" Grid.Column="1" FontSize="14"/>
     </Grid>
 </UserControl>

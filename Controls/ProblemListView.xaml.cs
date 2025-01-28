@@ -7,11 +7,22 @@ using System.Collections.ObjectModel;
 using acNET.Problem;
 using Microsoft.UI.Xaml.Media;
 using CommunityToolkit.WinUI.Helpers;
+using Microsoft.UI.Xaml.Controls.Primitives;
+using System.Diagnostics;
+using System.Linq;
 
 namespace Resolved.Controls
 {
     public sealed partial class ProblemListView : UserControl
     {
+        public static readonly DependencyProperty ProblemSourceProperty = DependencyProperty.Register(
+            "ProblemSource" , typeof(TaggedProblem[]) , typeof(ProblemListView) , new PropertyMetadata("ProblemSource")
+        );
+        public TaggedProblem[] ProblemSource {
+            get => (TaggedProblem[])GetValue(ProblemSourceProperty);
+            set => SetValue(ProblemSourceProperty , value);
+        }
+
         SolvedUser? CurrentUser;
 
         int prevIndex = 0;
@@ -30,12 +41,12 @@ namespace Resolved.Controls
         ];
 
         private TaggedProblem[] Cache = [];
-        public void Update(TaggedProblem[] list)
+        private void UpdateProblems(TaggedProblem[] list)
         {
             Cache = list;
             if (SortBySelector.SelectedItem == null)
                 return;
-            Problems.Clear();
+            ProblemCollection.Clear();
             if (SortBySelector.SelectedItem.TabIndex == 4)
                 Random.Shared.Shuffle(list);
             else
@@ -45,16 +56,16 @@ namespace Resolved.Controls
         }
         private void PushProblems(TaggedProblem[] list)
         {
-            Problems.Clear();
+            ProblemCollection.Clear();
             if (ascending)
             {
                 for (int i = 0 ; i < list.Length ; i++)
-                    Problems.Add(list[i]);
+                    ProblemCollection.Add(list[i]);
             }
             else
             {
                 for (int i = list.Length - 1 ; i >= 0 ; i--)
-                    Problems.Add(list[i]);
+                    ProblemCollection.Add(list[i]);
             }
         }
         private void SortBySelector_SelectionChanged(SelectorBar sender , SelectorBarSelectionChangedEventArgs args)
@@ -72,10 +83,10 @@ namespace Resolved.Controls
                 return;
             }
             prevIndex = now;
-            Update(Cache);
+            UpdateProblems(Cache);
         }
 
-        private ObservableCollection<TaggedProblem> Problems { get; set; } = [];
+        private ObservableCollection<TaggedProblem> ProblemCollection { get; set; } = [];
 
         readonly SolidColorBrush GreenColor = new("#009f6b".ToColor());
         readonly SolidColorBrush RedColor = new("#e74c3c".ToColor());
@@ -100,6 +111,97 @@ namespace Resolved.Controls
             {
                 me.Foreground = RedColor;
             }
+        }
+
+        private void BookmarkButton_Click(object sender , RoutedEventArgs e)
+        {
+            var me = (ToggleButton)sender;
+            if (ProblemsListView.SelectedItem == null)
+                return;
+
+            int id = ((TaggedProblem)ProblemsListView.SelectedItem).problemId;
+            if (SolvedInfo.Bookmarks.Contains(id))
+            {
+                me.IsChecked = false;
+                SolvedInfo.Bookmarks.Remove(id);
+            } else
+            {
+                me.IsChecked = true;
+                SolvedInfo.Bookmarks.Add(id);
+            }
+        }
+
+        private void OpenButton_Click(object sender , RoutedEventArgs e)
+        {
+            //var me = (Button)sender;
+            if (ProblemsListView.SelectedItem == null) 
+                return;
+
+            ("https://noj.am/" + ((TaggedProblem)ProblemsListView.SelectedItem).problemId).OpenToBrowser();
+        }
+
+        private void BookmarkButton_DataContextChanged(FrameworkElement sender , DataContextChangedEventArgs args)
+        {
+            var me = (ToggleButton)sender;
+            if (ProblemsListView.SelectedItem is not TaggedProblem problem)
+            {
+                me.IsEnabled = false;
+                return;
+            }
+
+            me.IsEnabled = true;
+            bool include = SolvedInfo.Bookmarks.Contains(problem.problemId);
+            me.IsChecked = include;
+            //if (include)
+            //{
+            //    me.Content = "In Bookmarks";
+            //} else
+            //{
+            //    me.Content = "Add Bookmarks";
+            //}
+        }
+
+        private void OpenButton_DataContextChanged(FrameworkElement sender , DataContextChangedEventArgs args)
+        {
+            var me = (Button)sender;
+            if (ProblemsListView.SelectedItem is not TaggedProblem problem)
+            {
+                me.IsEnabled = false;
+                return;
+            }
+
+            me.IsEnabled = true;
+        }
+
+        private void ProblemsListView_SelectionChanged(object sender , SelectionChangedEventArgs e)
+        {
+            var me = (ListView)sender;
+            Debug.WriteLine($"selection changed: {e.RemovedItems.FirstOrDefault("null").GetType()} -> {e.AddedItems.FirstOrDefault("null").GetType()}");
+
+            if (e.AddedItems.FirstOrDefault() is not TaggedProblem problem)
+            {
+                ProblemBookmarkButton.IsEnabled = false;
+                ProblemOpenInOfflineButton.IsEnabled = false;
+                ProblemOpenToBrowserButton.IsEnabled = false;
+
+                ProblemDetailText.Text = "Select a problem.";
+                return;
+            }
+
+            ProblemBookmarkButton.IsEnabled = true;
+            ProblemOpenInOfflineButton.IsEnabled = true;
+            ProblemOpenToBrowserButton.IsEnabled = true;
+
+            ProblemBookmarkButton.IsChecked = SolvedInfo.Bookmarks.Contains(problem.problemId);
+
+            ProblemDetailText.Text = $"Average tried count: {problem.averageTries}, Accepted user count: {problem.acceptedUserCount}";
+        }
+
+        private void ProblemSearchTextBox_TextChanged(object sender , TextChangedEventArgs e)
+        {
+            string search = ProblemSearchTextBox.Text;
+            var filter = ProblemSource.Where(p => p.Matching(search)).ToArray();
+            UpdateProblems(filter);
         }
     }
 }

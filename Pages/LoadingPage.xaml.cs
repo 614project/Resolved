@@ -27,7 +27,7 @@ namespace Resolved.Pages
         public LoadingPage()
         {
             this.InitializeComponent();
-            Solved.OnLodingEvent += this.Solved_OnLodingEvent;
+            SolvedInfo.OnLodingEvent += this.Solved_OnLodingEvent;
             timer.Tick += this.Timer_Tick;
             timer.Start();
             time = DateTime.Now.TimeOfDay;
@@ -48,7 +48,7 @@ namespace Resolved.Pages
         {
             Task.Run(() => {
                 Configuration.Load();
-                Solved.Load();
+                SolvedInfo.Load();
 
                 DispatcherQueue.TryEnqueue(() => {
                     Configuration.BackdropUpdate();

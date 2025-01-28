@@ -35,5 +35,5 @@ class Configuration
             _ => MainWindow.DefaultBackdrop
         };
     }
-    public static SolvedUser? CurrentUser => _conf.currentUser == null ? null : Solved.Users[_conf.currentUser];
+    public static SolvedUser? CurrentUser => _conf.currentUser == null ? null : SolvedInfo.Users[_conf.currentUser];
 }

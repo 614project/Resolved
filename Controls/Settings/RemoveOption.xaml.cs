@@ -41,7 +41,7 @@ namespace Resolved.Controls.Settings
             var result = await dialog.ShowAsync();
             if (result == ContentDialogResult.Primary)
             {
-                Solved.RemoveProblems();
+                SolvedInfo.RemoveProblems();
                 MainWindow.SelectorBar.SelectedItem = null;
             }
         }
@@ -61,7 +61,7 @@ namespace Resolved.Controls.Settings
             var result = await dialog.ShowAsync();
             if (result == ContentDialogResult.Primary)
             {
-                Solved.RemoveUsers();
+                SolvedInfo.RemoveUsers();
                 MainWindow.SelectorBar.SelectedItem = null;
             }
         }

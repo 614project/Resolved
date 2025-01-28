@@ -72,17 +72,17 @@ public class SolvedUser
         DateTime startDownload = DateTime.Now;
         Exception? ex;
         //추가 정보
-        (var addition, ex) = await Solved.API.GetUserAdditionalInfoAsync(handle);
+        (var addition, ex) = await SolvedInfo.API.GetUserAdditionalInfoAsync(handle);
         if (addition == null)
             return ex;
         this.AdditionalInfo = addition;
         //맞은 문제
-        (var query, ex) = await Solved.API.GetSearchProblemAsync($"s@{handle}");
+        (var query, ex) = await SolvedInfo.API.GetSearchProblemAsync($"s@{handle}");
         if (query == null)
             return ex;
         this.AccpetProblems = new(query.items.Select(q => q.problemId));
         //실패한 문제
-        (var query2, ex) = await Solved.API.GetSearchProblemAsync($"t@{handle} -s@{handle}");
+        (var query2, ex) = await SolvedInfo.API.GetSearchProblemAsync($"t@{handle} -s@{handle}");
         if (query2 == null)
             return ex;
         this.FailedProblems = new(query2.items.Select(q => q.problemId));

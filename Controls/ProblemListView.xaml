@@ -14,6 +14,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <Grid Grid.Row="0">
             <Grid.ColumnDefinitions>
@@ -30,8 +31,9 @@
                 <SelectorBarItem Text="Random" TabIndex="4" ToolTipService.ToolTip="Just shuffle." FontFamily="Outfit"/>
                 <SelectorBarItem Text="Ascending" TabIndex="5" ToolTipService.ToolTip="Set sort order." FontFamily="Outfit" Icon="Sort"/>
             </SelectorBar>
+            <TextBox x:Name="ProblemSearchTextBox" TextChanged="ProblemSearchTextBox_TextChanged" Grid.Column="2" VerticalAlignment="Bottom" Margin="0,0,0,8" HorizontalAlignment="Right" FontFamily="Outfit" PlaceholderText="Search" CornerRadius="4" MinWidth="300"/>
         </Grid>
-        <ListView Grid.Row="1" Name="ProblemsListView" ItemsSource="{x:Bind Problems}" Background="#10ffffff" CornerRadius="4" HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch">
+        <ListView Grid.Row="1" Name="ProblemsListView" ItemsSource="{x:Bind ProblemCollection}" Background="#10ffffff" CornerRadius="4" HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" SelectionChanged="ProblemsListView_SelectionChanged">
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="this:TaggedProblem">
                     <Grid HorizontalAlignment="Stretch">
@@ -40,12 +42,24 @@
                             <ColumnDefinition Width="50"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
-                        <TextBlock Text="{x:Bind GetTierName}" Foreground="{x:Bind GetTierColor}" Grid.Column="0" FontFamily="Outfit"/>
-                        <TextBlock x:Name="ProblemIdTextBlock" DataContextChanged="ProblemIdTextBlock_DataContextChanged" Text="{x:Bind problemId}" Grid.Column="1" Foreground="DarkSlateGray" FontFamily="Outfit"/>
-                        <TextBlock x:Name="ProblemTitleTextBlock" Text="{x:Bind titleKo}" Grid.Column="2" FontFamily="SUIT"/>
+                        <TextBlock Text="{x:Bind GetTierName}" Foreground="{x:Bind GetTierColor}" Grid.Column="0" FontFamily="Outfit" VerticalAlignment="Center"/>
+                        <TextBlock x:Name="ProblemIdTextBlock" DataContextChanged="ProblemIdTextBlock_DataContextChanged" Text="{x:Bind problemId}" Grid.Column="1" Foreground="DarkSlateGray" FontFamily="Outfit" VerticalAlignment="Center"/>
+                        <TextBlock x:Name="ProblemTitleTextBlock" Text="{x:Bind titleKo}" Grid.Column="2" FontFamily="SUIT" VerticalAlignment="Center"/>
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
+        <Grid Grid.Row="2" ColumnSpacing="4" VerticalAlignment="Bottom" Margin="0, 8">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock x:Name="ProblemDetailText" Text="Select a problem." FontFamily="Outfit" Grid.Column="0" VerticalAlignment="Center" />
+            <ToggleButton x:Name="ProblemBookmarkButton" Content="Bookmark" IsEnabled="False" Click="BookmarkButton_Click" FontFamily="Outfit" Grid.Column="1" VerticalAlignment="Bottom"/>
+            <Button x:Name="ProblemOpenToBrowserButton" Content="Open to browser" IsEnabled="False" Click="OpenButton_Click" FontFamily="Outfit" Grid.Column="2" VerticalAlignment="Bottom"/>
+            <Button x:Name="ProblemOpenInOfflineButton" Content="Open in offline" IsEnabled="False" FontFamily="Outfit" Grid.Column="3" VerticalAlignment="Bottom"/>
+        </Grid>
     </Grid>
 </UserControl>
