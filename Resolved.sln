@@ -5,6 +5,8 @@ VisualStudioVersion = 17.13.35605.110
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Resolved", "Resolved.csproj", "{C57D2911-2900-4520-A6D6-9F62A67D85E0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "acNET", "..\..\..\..\source\repos\acNET\acNET.csproj", "{5E2DCD8F-C307-D155-928E-A549FBD8870E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|ARM64 = Debug|ARM64
@@ -33,6 +35,18 @@ Global
 		{C57D2911-2900-4520-A6D6-9F62A67D85E0}.Release|x86.ActiveCfg = Release|x86
 		{C57D2911-2900-4520-A6D6-9F62A67D85E0}.Release|x86.Build.0 = Release|x86
 		{C57D2911-2900-4520-A6D6-9F62A67D85E0}.Release|x86.Deploy.0 = Release|x86
+		{5E2DCD8F-C307-D155-928E-A549FBD8870E}.Debug|ARM64.ActiveCfg = Debug|Any CPU
+		{5E2DCD8F-C307-D155-928E-A549FBD8870E}.Debug|ARM64.Build.0 = Debug|Any CPU
+		{5E2DCD8F-C307-D155-928E-A549FBD8870E}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{5E2DCD8F-C307-D155-928E-A549FBD8870E}.Debug|x64.Build.0 = Debug|Any CPU
+		{5E2DCD8F-C307-D155-928E-A549FBD8870E}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{5E2DCD8F-C307-D155-928E-A549FBD8870E}.Debug|x86.Build.0 = Debug|Any CPU
+		{5E2DCD8F-C307-D155-928E-A549FBD8870E}.Release|ARM64.ActiveCfg = Release|Any CPU
+		{5E2DCD8F-C307-D155-928E-A549FBD8870E}.Release|ARM64.Build.0 = Release|Any CPU
+		{5E2DCD8F-C307-D155-928E-A549FBD8870E}.Release|x64.ActiveCfg = Release|Any CPU
+		{5E2DCD8F-C307-D155-928E-A549FBD8870E}.Release|x64.Build.0 = Release|Any CPU
+		{5E2DCD8F-C307-D155-928E-A549FBD8870E}.Release|x86.ActiveCfg = Release|Any CPU
+		{5E2DCD8F-C307-D155-928E-A549FBD8870E}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

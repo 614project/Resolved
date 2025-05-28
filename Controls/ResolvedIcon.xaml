@@ -8,12 +8,12 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Grid Grid.Column="1" HorizontalAlignment="Left">
+    <Grid Grid.Column="1" HorizontalAlignment="Left" ColumnSpacing="8">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
         <TextBlock Text="resolved.ce" FontSize="20" Grid.Column="0" HorizontalAlignment="Left" />
-        <TextBlock Text="Offline BOJ/solved.ac explorer" Foreground="DarkSlateGray" Grid.Column="1" FontSize="14"/>
+        <TextBlock Text="Offline BOJ/solved.ac explorer" Foreground="DarkSlateGray" Grid.Column="1" FontSize="14" VerticalAlignment="Bottom" />
     </Grid>
 </UserControl>
