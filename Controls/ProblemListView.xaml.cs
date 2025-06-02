@@ -4,44 +4,49 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Resolved.Scripts;
 using System.Collections.ObjectModel;
-using acNET.Problem;
+using AcNET.Problem;
 using Microsoft.UI.Xaml.Media;
 using CommunityToolkit.WinUI.Helpers;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using System.Diagnostics;
 using System.Linq;
+using Resolved.Collections;
+using Windows.System;
 
 namespace Resolved.Controls
 {
     public sealed partial class ProblemListView : UserControl
     {
         public static readonly DependencyProperty ProblemSourceProperty = DependencyProperty.Register(
-            "ProblemSource" , typeof(TaggedProblem[]) , typeof(ProblemListView) , new PropertyMetadata("ProblemSource")
+            "ProblemSource" , typeof(ResolvedProblem[]) , typeof(ProblemListView) , new PropertyMetadata("ProblemSource")
         );
-        public TaggedProblem[] ProblemSource {
-            get => (TaggedProblem[])GetValue(ProblemSourceProperty);
+        public ResolvedProblem[] ProblemSource {
+            get => (ResolvedProblem[])GetValue(ProblemSourceProperty);
             set => SetValue(ProblemSourceProperty , value);
         }
 
-        SolvedUser? CurrentUser;
+        ResolvedUser? CurrentUser = null;
 
         int prevIndex = 0;
         bool ascending = true;
         public ProblemListView()
         {
             this.InitializeComponent();
-            this.CurrentUser = Configuration.CurrentUser;
+            if (Configuration.CurrentUser is string handle)
+            {
+                this.CurrentUser = Database.Users.FindById(handle);
+            }
         }
 
-        readonly Comparer<TaggedProblem>[] SortOptions = [
-            Comparer<TaggedProblem>.Create((a , b) => a.problemId.CompareTo(b.problemId)),
-            Comparer<TaggedProblem>.Create((a,b) => a.level.CompareTo(b.level)),
-            Comparer<TaggedProblem>.Create((a , b) => a.titleKo.CompareTo(b.titleKo)),
-            Comparer<TaggedProblem>.Create((a, b) => a.acceptedUserCount.CompareTo(b.acceptedUserCount))
+        readonly Comparer<ResolvedProblem>[] SortOptions = [
+            Comparer<ResolvedProblem>.Create((a , b) => a.ProblemId.CompareTo(b.ProblemId)),
+            Comparer<ResolvedProblem>.Create((a,b) => a.Level.CompareTo(b.Level)),
+            Comparer<ResolvedProblem>.Create((a , b) => a.GetTitle().CompareTo(b.GetTitle())),
+            Comparer<ResolvedProblem>.Create((a, b) => a.AcceptedUserCount.CompareTo(b.AcceptedUserCount))
         ];
 
-        private TaggedProblem[] Cache = [];
-        private void UpdateProblems(TaggedProblem[] list)
+        private ResolvedProblem[] Cache = [];
+        private void UpdateProblems(ResolvedProblem[] list)
         {
             Cache = list;
             if (SortBySelector.SelectedItem == null)
@@ -54,7 +59,7 @@ namespace Resolved.Controls
 
             PushProblems(list);
         }
-        private void PushProblems(TaggedProblem[] list)
+        private void PushProblems(ResolvedProblem[] list)
         {
             ProblemCollection.Clear();
             if (ascending)
@@ -86,7 +91,7 @@ namespace Resolved.Controls
             UpdateProblems(Cache);
         }
 
-        private ObservableCollection<TaggedProblem> ProblemCollection { get; set; } = [];
+        private ObservableCollection<ResolvedProblem> ProblemCollection { get; set; } = [];
 
         readonly SolidColorBrush GreenColor = new("#009f6b".ToColor());
         readonly SolidColorBrush RedColor = new("#e74c3c".ToColor());
@@ -97,17 +102,17 @@ namespace Resolved.Controls
                 return;
 
             var me = (TextBlock)sender;
-            var info = me.DataContext as TaggedProblem;
+            var info = me.DataContext as ResolvedProblem;
             if (info == null)
             {
                 return;
             }
 
-            if (CurrentUser.AccpetProblems.Contains(info.problemId))
+            if (CurrentUser.AcceptProblems.Contains(info.ProblemId))
             {
                 me.Foreground = GreenColor;
             }
-            else if (CurrentUser.FailedProblems.Contains(info.problemId))
+            else if (CurrentUser.FailedProblems.Contains(info.ProblemId))
             {
                 me.Foreground = RedColor;
             }
@@ -119,66 +124,65 @@ namespace Resolved.Controls
             if (ProblemsListView.SelectedItem == null)
                 return;
 
-            int id = ((TaggedProblem)ProblemsListView.SelectedItem).problemId;
-            if (SolvedInfo.Bookmarks.Contains(id))
+            int id = ((ResolvedProblem)ProblemsListView.SelectedItem).ProblemId;
+            if (Database.Bookmarks.FindById(id) != null)
             {
                 me.IsChecked = false;
-                SolvedInfo.Bookmarks.Remove(id);
+                Database.Bookmarks.Delete(id);
             } else
             {
                 me.IsChecked = true;
-                SolvedInfo.Bookmarks.Add(id);
+                Database.Bookmarks.Upsert(new ResolvedBookmark(id));
             }
         }
 
         private void OpenButton_Click(object sender , RoutedEventArgs e)
         {
-            //var me = (Button)sender;
             if (ProblemsListView.SelectedItem == null) 
                 return;
 
-            ("https://noj.am/" + ((TaggedProblem)ProblemsListView.SelectedItem).problemId).OpenToBrowser();
+            _ = Launcher.LaunchUriAsync(new("https://noj.am/" + ((ResolvedProblem)ProblemsListView.SelectedItem).ProblemId));
         }
 
-        private void BookmarkButton_DataContextChanged(FrameworkElement sender , DataContextChangedEventArgs args)
-        {
-            var me = (ToggleButton)sender;
-            if (ProblemsListView.SelectedItem is not TaggedProblem problem)
-            {
-                me.IsEnabled = false;
-                return;
-            }
+        //private void BookmarkButton_DataContextChanged(FrameworkElement sender , DataContextChangedEventArgs args)
+        //{
+        //    var me = (ToggleButton)sender;
+        //    if (ProblemsListView.SelectedItem is not ResolvedProblem problem)
+        //    {
+        //        me.IsEnabled = false;
+        //        return;
+        //    }
 
-            me.IsEnabled = true;
-            bool include = SolvedInfo.Bookmarks.Contains(problem.problemId);
-            me.IsChecked = include;
-            //if (include)
-            //{
-            //    me.Content = "In Bookmarks";
-            //} else
-            //{
-            //    me.Content = "Add Bookmarks";
-            //}
-        }
+        //    me.IsEnabled = true;
+        //    bool include = Database.Bookmarks.FindById(problem.ProblemId) != null;
+        //    me.IsChecked = include;
+        //    //if (include)
+        //    //{
+        //    //    me.Content = "In Bookmarks";
+        //    //} else
+        //    //{
+        //    //    me.Content = "Add Bookmarks";
+        //    //}
+        //}
 
-        private void OpenButton_DataContextChanged(FrameworkElement sender , DataContextChangedEventArgs args)
-        {
-            var me = (Button)sender;
-            if (ProblemsListView.SelectedItem is not TaggedProblem problem)
-            {
-                me.IsEnabled = false;
-                return;
-            }
+        //private void OpenButton_DataContextChanged(FrameworkElement sender , DataContextChangedEventArgs args)
+        //{
+        //    var me = (Button)sender;
+        //    if (ProblemsListView.SelectedItem is not ResolvedProblem problem)
+        //    {
+        //        me.IsEnabled = false;
+        //        return;
+        //    }
 
-            me.IsEnabled = true;
-        }
+        //    me.IsEnabled = true;
+        //}
 
         private void ProblemsListView_SelectionChanged(object sender , SelectionChangedEventArgs e)
         {
             var me = (ListView)sender;
             Debug.WriteLine($"selection changed: {e.RemovedItems.FirstOrDefault("null").GetType()} -> {e.AddedItems.FirstOrDefault("null").GetType()}");
 
-            if (e.AddedItems.FirstOrDefault() is not TaggedProblem problem)
+            if (e.AddedItems.FirstOrDefault() is not ResolvedProblem problem)
             {
                 ProblemBookmarkButton.IsEnabled = false;
                 ProblemOpenInOfflineButton.IsEnabled = false;
@@ -192,16 +196,21 @@ namespace Resolved.Controls
             ProblemOpenInOfflineButton.IsEnabled = true;
             ProblemOpenToBrowserButton.IsEnabled = true;
 
-            ProblemBookmarkButton.IsChecked = SolvedInfo.Bookmarks.Contains(problem.problemId);
+            ProblemBookmarkButton.IsChecked = Database.Bookmarks.FindById(problem.ProblemId) != null;
 
-            ProblemDetailText.Text = $"Average tried count: {problem.averageTries}, Accepted user count: {problem.acceptedUserCount}";
+            ProblemDetailText.Text = $"Average tried count: {problem.AverageTries}, Accepted user count: {problem.AcceptedUserCount}";
         }
 
         private void ProblemSearchTextBox_TextChanged(object sender , TextChangedEventArgs e)
         {
             string search = ProblemSearchTextBox.Text;
-            var filter = ProblemSource.Where(p => p.Matching(search)).ToArray();
+            var filter = ProblemSource.Where(p => p.IsMatching(search)).ToArray();
             UpdateProblems(filter);
+        }
+
+        private void ProblemListViewLoading(FrameworkElement sender , object args)
+        {
+            Cache = ProblemSource;
         }
     }
 }

@@ -1,22 +1,9 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Navigation;
-using acNET.Problem;
 using System.Collections.ObjectModel;
-using Resolved.Scripts;
-using System.Threading.Tasks;
-using System.Threading;
+using Resolved.Collections;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -32,15 +19,15 @@ namespace Resolved.Controls
             this.InitializeComponent();
         }
 
-        readonly Comparer<SolvedUser>[] SortOptions = [
-            Comparer<SolvedUser>.Create((a , b) => a.User.rating.CompareTo(b.User.rating)),
-            Comparer<SolvedUser>.Create((a,b) => a.User.solvedCount.CompareTo(b.User.solvedCount)),
-            Comparer<SolvedUser>.Create((a , b) => a.User.handle.CompareTo(b.User.handle)),
-            Comparer<SolvedUser>.Create((a, b) => a.User.@class.CompareTo(b.User.@class))
+        readonly Comparer<ResolvedUser>[] SortOptions = [
+            Comparer<ResolvedUser>.Create((a , b) => a.User.Rating.CompareTo(b.User.Rating)),
+            Comparer<ResolvedUser>.Create((a,b) => a.User.SolvedCount.CompareTo(b.User.SolvedCount)),
+            Comparer<ResolvedUser>.Create((a , b) => a.User.Handle.CompareTo(b.User.Handle)),
+            Comparer<ResolvedUser>.Create((a, b) => a.User.Class.CompareTo(b.User.Class))
         ];
 
-        private SolvedUser[] Cache = [];
-        public void Update(SolvedUser[] list)
+        private ResolvedUser[] Cache = [];
+        public void Update(ResolvedUser[] list)
         {
             Cache = list;
             if (SortBySelector.SelectedItem == null)
@@ -53,7 +40,7 @@ namespace Resolved.Controls
 
             PushProblems(list);
         }
-        private void PushProblems(SolvedUser[] list)
+        private void PushProblems(ResolvedUser[] list)
         {
             UserCollection.Clear();
             if (ascending)
@@ -85,7 +72,7 @@ namespace Resolved.Controls
             Update(Cache);
         }
 
-        private ObservableCollection<SolvedUser> UserCollection { get; set; } = [];
+        private ObservableCollection<ResolvedUser> UserCollection { get; set; } = [];
 
         public static readonly DependencyProperty SideProperty = DependencyProperty.Register(
             "Side" , typeof(object) , typeof(UserListView) , new PropertyMetadata(null)
@@ -95,10 +82,10 @@ namespace Resolved.Controls
             set => SetValue(SideProperty , value);
         }
 
-        public event EventHandler<SolvedUser?>? SelectUser = null;
+        public event EventHandler<ResolvedUser?>? SelectUser = null;
         private void UsersListView_SelectionChanged(object sender , SelectionChangedEventArgs e)
         {
-            SelectUser?.Invoke(sender , UsersListView.SelectedItem as SolvedUser);
+            SelectUser?.Invoke(sender , UsersListView.SelectedItem as ResolvedUser);
         }
 
         public int SelectedIndex {
@@ -108,7 +95,7 @@ namespace Resolved.Controls
 
         private void DownloadStatusTextBlock_DataContextChanged(FrameworkElement sender , DataContextChangedEventArgs args)
         {
-            if (args.NewValue is not SolvedUser info)
+            if (args.NewValue is not ResolvedUser info)
                 return;
             var me = (TextBlock)sender;
 

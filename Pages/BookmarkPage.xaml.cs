@@ -1,6 +1,7 @@
-using Microsoft.UI.Xaml;
+﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Resolved;
+using Resolved.Collections;
 using Resolved.Scripts;
 using System.Diagnostics;
 using System.Linq;
@@ -20,10 +21,6 @@ namespace Resolved.Pages
             this.InitializeComponent();
         }
 
-        private void ProblemList_Loaded(object sender , RoutedEventArgs e)
-        {
-            ProblemList.ProblemSource = SolvedInfo.Bookmarks.Select(x => SolvedInfo.Problems[x]).ToArray();
-            //ProblemList.UpdateProblems(SolvedInfo.Bookmarks.Select(x => SolvedInfo.Problems[x]).ToArray());
-        }
+        public ResolvedProblem[] ProblemSource => Database.Bookmarks.FindAll().Select(bookmark => bookmark.Problem).ToArray();
     }
 }

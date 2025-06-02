@@ -1,6 +1,7 @@
 ﻿using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using Newtonsoft.Json;
+using Resolved.Collections;
 using System;
 using System.IO;
 using static Resolved.Scripts.JsonManager;
@@ -35,5 +36,5 @@ class Configuration
             _ => MainWindow.DefaultBackdrop
         };
     }
-    public static SolvedUser? CurrentUser => _conf.currentUser == null ? null : SolvedInfo.Users[_conf.currentUser];
+    public static string? CurrentUser => _conf.currentUser;
 }

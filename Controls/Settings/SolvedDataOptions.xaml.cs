@@ -36,7 +36,7 @@ namespace Resolved.Controls.Settings
         }
 
         private string DataSavePath => JsonManager.SaveFolder;
-        private string LastWriteTime => SolvedInfo.GetLastWriteTime()?.ToString(@"yyyy\-MM\-dd HH\:mm\:ss") ?? "(No saved)";
+        private string LastWriteTime => ResolvedInfo.GetLastWriteTime()?.ToString(@"yyyy\-MM\-dd HH\:mm\:ss") ?? "(No saved)";
         private string CurrentUesr => Configuration.Config.currentUser ?? "(None)";
 
         private async void OpenSaveFolderWithFileExplorer(object sender , RoutedEventArgs e)

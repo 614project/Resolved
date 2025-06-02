@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <UserControl
     x:Class="Resolved.Controls.Settings.RemoveOption"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -12,8 +12,10 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
         <Button x:Name="RemoveProblemsButton" Click="RemoveProblemsButton_Click" Content="Problems" Grid.Column="0" FontFamily="Outfit"/>
-        <Button x:Name="RemoveUsersButton" Click="RemoveUsersButton_Click" Content="Users" Grid.Column="1" FontFamily="Outfit"/>
+        <Button x:Name="RemoveBookmarksButton" Click="RemoveBookmarksButton_Click" Content="Bookmarks" Grid.Column="1" FontFamily="Outfit"/>
+        <Button x:Name="RemoveUsersButton" Click="RemoveUsersButton_Click" Content="Users" Grid.Column="2" FontFamily="Outfit"/>
     </Grid>
 </UserControl>

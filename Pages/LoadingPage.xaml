@@ -15,6 +15,6 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <TextBlock Text="resolved.ce" Grid.Row="0" Margin="20" FontSize="20"/>
-        <TextBlock x:Name="Status" Text="Please wait..." Grid.Row="1" VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="20" Foreground="DarkSlateGray"/>
+        <TextBlock x:Name="StatusTextBox" Text="Please wait..." Grid.Row="1" VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="20" Foreground="DarkSlateGray"/>
     </Grid>
 </Page>

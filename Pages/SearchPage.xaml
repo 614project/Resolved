@@ -7,6 +7,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ce="using:Resolved.Controls"
+    NavigationCacheMode="Enabled"
     mc:Ignorable="d">
     
     <Grid HorizontalAlignment="Stretch" Margin="20">
@@ -22,6 +23,6 @@
             <ce:ResolvedIcon Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Top" />
             <!--<AutoSuggestBox PlaceholderText="Search" Grid.Column="1" Margin="20,0" VerticalAlignment="Center" x:Name="SearchBox" TextChanged="SearchBox_TextChanged" FontFamily="SUIT" ToolTipService.ToolTip="Enter problems you want to search for."/>-->
         </Grid>
-        <ce:ProblemListView Grid.Row="2" x:Name="ProblemList" Loaded="ProblemList_Loaded" />
+        <ce:ProblemListView Grid.Row="2" x:Name="ProblemList" ProblemSource="{x:Bind ProblemSource}" />
     </Grid>
 </Page>

@@ -13,7 +13,7 @@
         <Grid Grid.Row="1" MaxWidth="1000" HorizontalAlignment="Stretch" ColumnDefinitions="Auto, *" Margin="0,8,0,0">
             <PersonPicture x:Name="Profile" DisplayName="?" Width="120" Height="120" Grid.Column="0"/>
             <Grid Grid.Column="1" HorizontalAlignment="Stretch" RowDefinitions="Auto, Auto, Auto, Auto" VerticalAlignment="Center">
-                <AutoSuggestBox x:Name="Handle" PlaceholderText="Enter username." VerticalAlignment="Bottom" Grid.Row="0" FontFamily="Outfit" ItemsSource="{x:Bind SuggestKeywords, Mode=OneWay}" TextChanged="Handle_TextChanged" />
+                <AutoSuggestBox x:Name="Handle" PlaceholderText="Enter username." VerticalAlignment="Bottom" Grid.Row="0" FontFamily="Outfit" ItemsSource="{x:Bind SuggestKeywords, Mode=OneWay}" TextChanged="HandleTextChanged" />
                 <TextBlock x:Name="Bio" VerticalAlignment="Top" Grid.Row="1"/>
                 <TextBlock x:Name="Tier" Text="Unranked 0" FontSize="20" Grid.Row="2" FontFamily="Outfit" VerticalAlignment="Bottom" />
                 <ProgressBar x:Name="RatingBar" Grid.Row="3" HorizontalAlignment="Stretch" Value="10"/>

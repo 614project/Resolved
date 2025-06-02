@@ -15,6 +15,7 @@
     <ScrollViewer>
         <StackPanel Spacing="4" Margin="20">
             <opt:BackdropOption/>
+            <!--<opt:AppearanceOption/>-->
             <opt:SolvedDataOptions x:Name="SolvedDataOptionsControl" />
             <TextBlock Text="made by 614project." HorizontalAlignment="Center" Margin="0,20,0,0"/>
         </StackPanel>

@@ -24,8 +24,8 @@ namespace Resolved.Controls.Settings
         public DownloadOption()
         {
             this.InitializeComponent();
-            SolvedInfo.OnProgressChanged += this.Solved_OnProgressChanged;
-            SolvedInfo.OnDownloadEnd += this.Solved_OnDownloadEnd;
+            ResolvedInfo.OnProgressChanged += this.Solved_OnProgressChanged;
+            ResolvedInfo.OnDownloadEnd += this.Solved_OnDownloadEnd;
         }
 
         private void Solved_OnDownloadEnd(object? sender , Exception? e)
@@ -55,7 +55,7 @@ namespace Resolved.Controls.Settings
             MyButton.MinWidth = 160;
             MyButton.IsEnabled = false;
             MyProgress.Visibility = Visibility.Visible;
-            SolvedInfo.Download();
+            ResolvedInfo.Download();
         }
     }
 }

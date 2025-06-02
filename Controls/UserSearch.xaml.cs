@@ -38,41 +38,41 @@ namespace Resolved.Controls
         }
 
         private ObservableCollection<string> SuggestKeywords { get; } = new();
-        private async void Handle_TextChanged(AutoSuggestBox sender , AutoSuggestBoxTextChangedEventArgs args)
+        private async void HandleTextChanged(AutoSuggestBox sender , AutoSuggestBoxTextChangedEventArgs args)
         {
-            (var suggest, _) = await SolvedInfo.API.GetSearchAutoCompleteAsync(sender.Text);
+            (var suggest, _) = await ResolvedInfo.API.GetSearchAutoCompleteAsync(sender.Text);
             if (suggest != null)
             {
                 SuggestKeywords.Clear();
-                foreach(var user in suggest.users)
+                foreach(var user in suggest.Users)
                 {
-                    SuggestKeywords.Add(user.handle);
+                    SuggestKeywords.Add(user.Handle);
                 }
             }
 
-            (var info, _) = await SolvedInfo.API.GetUserAsync(Handle.Text.ToLower());
+            (var info, _) = await ResolvedInfo.API.GetUserAsync(Handle.Text.ToLower());
             if (info != null)
             {
                 DispatcherQueue.TryEnqueue(() => {
-                    if (info.profileImageUrl == null)
+                    if (info.ProfileImageUrl == null)
                         Profile.ProfilePicture = null;
                     else
-                        Profile.ProfilePicture = new BitmapImage(new Uri(info.profileImageUrl));
+                        Profile.ProfilePicture = new BitmapImage(new Uri(info.ProfileImageUrl));
 
-                    Tier.Text = $"{info.GetTierName} {info.rating}";
-                    Bio.Text = info.bio;
+                    Tier.Text = $"{info.GetTierName} {info.Rating}";
+                    Bio.Text = info.Bio;
 
                     SolidColorBrush color = new((info.GetTierColor ?? "#000000").ToColor());
                     Tier.Foreground = color;
                     RatingBar.Foreground = color;
                 });
 
-                (var background, _) = await SolvedInfo.API.GetBackgroundAsync(info.backgroundId);
+                (var background, _) = await ResolvedInfo.API.GetBackgroundAsync(info.BackgroundId);
                 DispatcherQueue.TryEnqueue(() => {
                     if (background == null)
                         Background.Source = null;
                     else
-                        Background.Source = new BitmapImage(new Uri(background.backgroundImageUrl));
+                        Background.Source = new BitmapImage(new Uri(background.BackgroundImageUrl));
                 });
             }
         }

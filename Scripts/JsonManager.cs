@@ -5,7 +5,7 @@ namespace Resolved.Scripts;
 
 class JsonManager
 {
-    public static string SaveFolder { get; } = Path.Combine(Windows.Storage.ApplicationData.Current.LocalCacheFolder.Path, "Roaming" , "resolved");
+    public static string SaveFolder { get; } = Windows.Storage.ApplicationData.Current.LocalFolder.Path;
 
     public static bool TryRead<T>(ref T target , string path)
     {

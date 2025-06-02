@@ -6,9 +6,10 @@
     xmlns:local="using:Resolved.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:this="using:acNET.Problem"
+    xmlns:this="using:AcNET.Problem"
     xmlns:ce="using:Resolved.Controls"
-    mc:Ignorable="d">
+    mc:Ignorable="d"
+    Loading="ProblemListViewLoading">
 
     <Grid HorizontalAlignment="Stretch">
         <Grid.RowDefinitions>
@@ -35,7 +36,7 @@
         </Grid>
         <ListView Grid.Row="1" Name="ProblemsListView" ItemsSource="{x:Bind ProblemCollection}" Background="#10ffffff" CornerRadius="4" HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" SelectionChanged="ProblemsListView_SelectionChanged">
             <ListView.ItemTemplate>
-                <DataTemplate x:DataType="this:TaggedProblem">
+                <DataTemplate x:DataType="this:SolvedTaggedProblem">
                     <Grid HorizontalAlignment="Stretch">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="100"/>
@@ -43,8 +44,8 @@
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
                         <TextBlock Text="{x:Bind GetTierName}" Foreground="{x:Bind GetTierColor}" Grid.Column="0" FontFamily="Outfit" VerticalAlignment="Center"/>
-                        <TextBlock x:Name="ProblemIdTextBlock" DataContextChanged="ProblemIdTextBlock_DataContextChanged" Text="{x:Bind problemId}" Grid.Column="1" Foreground="DarkSlateGray" FontFamily="Outfit" VerticalAlignment="Center"/>
-                        <TextBlock x:Name="ProblemTitleTextBlock" Text="{x:Bind titleKo}" Grid.Column="2" FontFamily="SUIT" VerticalAlignment="Center"/>
+                        <TextBlock x:Name="ProblemIdTextBlock" DataContextChanged="ProblemIdTextBlock_DataContextChanged" Text="{x:Bind ProblemId}" Grid.Column="1" Foreground="DarkSlateGray" FontFamily="Outfit" VerticalAlignment="Center"/>
+                        <TextBlock x:Name="ProblemTitleTextBlock" Text="{x:Bind TitleKo}" Grid.Column="2" FontFamily="SUIT" VerticalAlignment="Center"/>
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>

@@ -1,8 +1,8 @@
-﻿using acNET.User;
+﻿using AcNET.User;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
+using Resolved.Collections;
 using Resolved.Scripts;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -22,17 +22,17 @@ namespace Resolved.Pages
         public UserManagementPage()
         {
             this.InitializeComponent();
-            this.MyUserListView.Update(SolvedInfo.Users.Values.ToArray());
+            this.MyUserListView.Update(Database.Users.FindAll().ToArray());
             this.AddUser.MinWidth = this.AddUser.ActualWidth;
             this.Loaded += this.UserManagementPage_Loaded;
             this.Unloaded += this.UserManagementPage_Unloaded;
-            this.debouncer.OnResult += this.Debouncer_OnResult;
+            this.debouncer.OnResult += this.DebouncerOnResult;
             this.Search.KeyDown += this.Search_KeyDown;
             this.MyUserListView.SelectUser += this.MyUserListView_SelectUser;
         }
 
-        SolvedUser? nowUser;
-        private void MyUserListView_SelectUser(object? sender , SolvedUser? info)
+        ResolvedUser? nowUser;
+        private void MyUserListView_SelectUser(object? sender , ResolvedUser? info)
         {
             //이전에 할당한거 제거
             if (nowUser != null)
@@ -56,13 +56,14 @@ namespace Resolved.Pages
             AddUser.StartBringIntoView();
         }
 
-        private void Debouncer_OnResult(object? sender , RankedUser? user)
+        private void DebouncerOnResult(object? sender , SolvedSocialUser? user)
         {
             predictAddUser = user;
             bool alreadyExist = false;
             if (predictAddUser != null)
             {
-                if (alreadyExist = SolvedInfo.Users.ContainsKey(predictAddUser.handle))
+                //if (alreadyExist = SolvedInfo.Users.ContainsKey(predictAddUser.handle))
+                if (alreadyExist = Database.Users.Exists(user => user.Handle == predictAddUser.Handle))
                     predictAddUser = null;
             }
 
@@ -78,7 +79,7 @@ namespace Resolved.Pages
         private void UserManagementPage_Unloaded(object sender , RoutedEventArgs e)
         {
             MainWindow.SelectorBar.Items.Remove(mySelectBarItem);
-            SolvedInfo.UsersSave();
+            //ResolvedInfo.UsersSave();
         }
 
         private void UserManagementPage_Loaded(object sender , RoutedEventArgs e)
@@ -93,19 +94,20 @@ namespace Resolved.Pages
                 MainWindow.Frame.Navigate(typeof(SettingPage));
         }
 
-        Debouncer<string,RankedUser?> debouncer = new(
-            name => SolvedInfo.API.GetUser(name).Result
+        Debouncer<string,SolvedSocialUser?> debouncer = new(
+            name => ResolvedInfo.API.GetUser(name).Result
         );
-        RankedUser? predictAddUser = null;
+        SolvedSocialUser? predictAddUser = null;
         private void AddUser_Click(object sender , RoutedEventArgs e)
         {
             if (predictAddUser == null)
                 return;
-            SolvedUser solvedUser = new(predictAddUser);
-            SolvedInfo.Users.Add(solvedUser.Handle, solvedUser);
-            UpdateUserList(solvedUser.Handle);
-            Debouncer_OnResult(null , predictAddUser);
-            DispatcherQueue.TryEnqueue(solvedUser.StartDownload);
+            ResolvedUser resolvedUser = new(predictAddUser);
+            //SolvedInfo.Users.Add(solvedUser.Handle, solvedUser);
+            Database.Users.Insert(resolvedUser);
+            UpdateUserList(resolvedUser.Handle);
+            DebouncerOnResult(null , predictAddUser);
+            DispatcherQueue.TryEnqueue(resolvedUser.StartDownload);
         }
 
         private void Search_TextChanged(object sender , TextChangedEventArgs e)
@@ -118,7 +120,7 @@ namespace Resolved.Pages
             {
                 SearchStatus.Text = string.Empty;
                 SearchStatus.Visibility = Visibility.Collapsed;
-                MyUserListView.Update(SolvedInfo.Users.Values.ToArray());
+                MyUserListView.Update(Database.Users.FindAll().ToArray());
                 return;
             }
 
@@ -127,7 +129,7 @@ namespace Resolved.Pages
             debouncer.Current = handle;
             UpdateUserList(handle);
         }
-        private void UpdateUserList(string handle) => MyUserListView.Update(SolvedInfo.Users.Values.Where(user => user.Handle.Contains(handle)).ToArray());
+        private void UpdateUserList(string handle) => MyUserListView.Update(Database.Users.FindAll().Where(user => user.Handle.Contains(handle)).ToArray());
         private void ActionButtonsSetup()
         {
             bool exist = nowUser != null;
@@ -156,8 +158,9 @@ namespace Resolved.Pages
         private void RemoveButton_Click(object sender , RoutedEventArgs e)
         {
             if (nowUser == null) return;
-            SolvedInfo.Users.Remove(nowUser.Handle);
-            if (Configuration.CurrentUser?.Handle == nowUser.Handle)
+            //SolvedInfo.Users.Remove(nowUser.Handle);
+            Database.Users.Delete(nowUser.Handle);
+            if (Configuration.CurrentUser == nowUser.Handle)
             {
                 Configuration.Config.currentUser = null;
             }

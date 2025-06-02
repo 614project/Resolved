@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <UserControl
     x:Class="Resolved.Controls.UserListView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -6,7 +6,7 @@
     xmlns:local="using:Resolved.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:re="using:Resolved.Scripts"
+    xmlns:re="using:Resolved.Collections"
     mc:Ignorable="d">
 
     <Grid HorizontalAlignment="Stretch">
@@ -33,17 +33,17 @@
         </Grid>
         <ListView Grid.Row="1" Name="UsersListView" ItemsSource="{x:Bind UserCollection}" SelectionChanged="UsersListView_SelectionChanged" Background="#10ffffff" CornerRadius="4" HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch">
             <ListView.ItemTemplate>
-                <DataTemplate x:DataType="re:SolvedUser">
+                <DataTemplate x:DataType="re:ResolvedUser">
                     <Grid x:Name="UserInfoBar" HorizontalAlignment="Stretch" ColumnSpacing="16">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition Width="110"/>
                             <ColumnDefinition Width="100"/>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="50"/>
                             <ColumnDefinition Width="140"/>
                             <ColumnDefinition Width="140"/>
                         </Grid.ColumnDefinitions>
-                        <TextBlock Text="{x:Bind TierAndRating, Mode=OneWay}" Foreground="{x:Bind GetTierColor}" Grid.Column="0" FontFamily="Outfit" VerticalAlignment="Center"/>
+                        <TextBlock Text="{x:Bind TierAndRatingText, Mode=OneWay}" Foreground="{x:Bind GetTierColor}" Grid.Column="0" FontFamily="Outfit" VerticalAlignment="Center"/>
                         <TextBlock Text="{x:Bind Handle, Mode=OneWay}" Grid.Column="1" Foreground="DarkSlateGray" FontFamily="Outfit" VerticalAlignment="Center"/>
                         <TextBlock Text="{x:Bind Bio, Mode=OneWay}" Grid.Column="2" FontFamily="SUIT" VerticalAlignment="Center"/>
                         <TextBlock Text="{x:Bind ClassText, Mode=OneWay}" Grid.Column="3" FontFamily="Outfit" VerticalAlignment="Center" HorizontalAlignment="Center"/>
