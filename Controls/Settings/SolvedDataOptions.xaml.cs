@@ -32,12 +32,12 @@ namespace Resolved.Controls.Settings
         public void UpdateStatus()
         {
             LastWrtieTimeCard.Content = LastWriteTime;
-            CurrentUserCard.Content = CurrentUesr;
+            CurrentUserCard.Content = CurrentUser;
         }
 
         private string DataSavePath => JsonManager.SaveFolder;
         private string LastWriteTime => ResolvedInfo.GetLastWriteTime()?.ToString(@"yyyy\-MM\-dd HH\:mm\:ss") ?? "(No saved)";
-        private string CurrentUesr => Configuration.Config.currentUser ?? "(None)";
+        private string CurrentUser => ResolvedConfiguration.Config.currentUser ?? "(None)";
 
         private async void OpenSaveFolderWithFileExplorer(object sender , RoutedEventArgs e)
         {

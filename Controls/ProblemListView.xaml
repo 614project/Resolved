@@ -32,9 +32,15 @@
                 <SelectorBarItem Text="Random" TabIndex="4" ToolTipService.ToolTip="Just shuffle." FontFamily="Outfit"/>
                 <SelectorBarItem Text="Ascending" TabIndex="5" ToolTipService.ToolTip="Set sort order." FontFamily="Outfit" Icon="Sort"/>
             </SelectorBar>
-            <TextBox x:Name="ProblemSearchTextBox" TextChanged="ProblemSearchTextBox_TextChanged" Grid.Column="2" VerticalAlignment="Bottom" Margin="0,0,0,8" HorizontalAlignment="Right" FontFamily="Outfit" PlaceholderText="Search" CornerRadius="4" MinWidth="300"/>
+            <Grid Grid.Column="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBox x:Name="ProblemSearchTextBox" TextChanged="ProblemSearchTextBox_TextChanged" Grid.Column="1" VerticalAlignment="Bottom" Margin="0,0,0,8" HorizontalAlignment="Right" FontFamily="Outfit" PlaceholderText="Search" CornerRadius="4" MinWidth="300"/>
+            </Grid>
         </Grid>
-        <ListView Grid.Row="1" Name="ProblemsListView" ItemsSource="{x:Bind ProblemCollection}" Background="#10ffffff" CornerRadius="4" HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" SelectionChanged="ProblemsListView_SelectionChanged">
+        <ListView Grid.Row="1" Name="ProblemsListView" ItemsSource="{x:Bind ProblemCollection}" Background="{ThemeResource TranslucentListViewBackgroundColor}" CornerRadius="4" HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" SelectionChanged="ProblemsListView_SelectionChanged">
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="this:SolvedTaggedProblem">
                     <Grid HorizontalAlignment="Stretch">

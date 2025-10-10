@@ -31,8 +31,9 @@ namespace Resolved.Controls.Settings
         private void Solved_OnDownloadEnd(object? sender , Exception? e)
         {
             DispatcherQueue.TryEnqueue(() => {
-                if (e == null)
+                if (e == null) {
                     MyButton.Content = "Download success.";
+                }
                 else
                     MyButton.Content = "Download Failed.";
                 MyProgress.Visibility = Visibility.Collapsed;

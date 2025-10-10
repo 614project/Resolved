@@ -21,6 +21,6 @@ namespace Resolved.Pages
             this.InitializeComponent();
         }
 
-        public ResolvedProblem[] ProblemSource => Database.Bookmarks.FindAll().Select(bookmark => bookmark.Problem).ToArray();
+        public ResolvedProblem[] ProblemSource => ResolvedDatabase.Bookmarks.FindAll().Select(bookmark => bookmark.Problem).ToArray();
     }
 }

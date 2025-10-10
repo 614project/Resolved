@@ -14,7 +14,7 @@
                 <local:DownloadOption/>
             </ui:SettingsCard>
             <ui:SettingsCard x:Name="LastWrtieTimeCard" Header="Last problems downloaded date" Description="Exclude download failed." Content="{x:Bind LastWriteTime}" FontFamily="Outfit"/>
-            <ui:SettingsCard x:Name="CurrentUserCard" Header="Current user" Description="When you select a user, the app shows their related information as if they were logged in. For instance, solved problems will appear in green text." Content="{x:Bind CurrentUesr, Mode=OneWay}" FontFamily="Outfit"/>
+            <ui:SettingsCard x:Name="CurrentUserCard" Header="Current user" Description="When you select a user, the app shows their related information as if they were logged in. For instance, solved problems will appear in green text." Content="{x:Bind CurrentUser, Mode=OneWay}" FontFamily="Outfit"/>
             <ui:SettingsCard Header="Handle users data" Description="Download special users from solved.ac. Then overwrite and update." FontFamily="Outfit">
                 <Button FontFamily="Outfit" Content="Move to management page" x:Name="UserDownloadButton" Click="UserDownloadButton_Click" ToolTipService.ToolTip="You can handle user data such as seraching, adding, downloading, deleting, etc."/>
             </ui:SettingsCard>

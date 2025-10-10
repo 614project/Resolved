@@ -4,10 +4,10 @@ using System.IO;
 
 namespace Resolved.Scripts;
 
-public static class Database
+public static class ResolvedDatabase
 {
     static readonly LiteDatabase database;
-    static Database()
+    static ResolvedDatabase()
     {
         SaveFilePath = Path.Combine(Windows.Storage.ApplicationData.Current.LocalFolder.Path , "resolved.db");
         database = new(SaveFilePath);

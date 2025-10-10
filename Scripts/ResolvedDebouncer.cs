@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace Resolved.Scripts;
 
-class Debouncer<InType,OutType>(Func<InType,OutType> func) where InType : class
+class ResolvedDebouncer<InType,OutType>(Func<InType,OutType> func) where InType : class
 {
     readonly Func<InType,OutType> func = func;
 

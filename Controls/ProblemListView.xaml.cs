@@ -32,9 +32,9 @@ namespace Resolved.Controls
         public ProblemListView()
         {
             this.InitializeComponent();
-            if (Configuration.CurrentUser is string handle)
+            if (ResolvedConfiguration.CurrentUser is string handle)
             {
-                this.CurrentUser = Database.Users.FindById(handle);
+                this.CurrentUser = ResolvedDatabase.Users.FindById(handle);
             }
         }
 
@@ -125,14 +125,14 @@ namespace Resolved.Controls
                 return;
 
             int id = ((ResolvedProblem)ProblemsListView.SelectedItem).ProblemId;
-            if (Database.Bookmarks.FindById(id) != null)
+            if (ResolvedDatabase.Bookmarks.FindById(id) != null)
             {
                 me.IsChecked = false;
-                Database.Bookmarks.Delete(id);
+                ResolvedDatabase.Bookmarks.Delete(id);
             } else
             {
                 me.IsChecked = true;
-                Database.Bookmarks.Upsert(new ResolvedBookmark(id));
+                ResolvedDatabase.Bookmarks.Upsert(new ResolvedBookmark(id));
             }
         }
 
@@ -196,7 +196,7 @@ namespace Resolved.Controls
             ProblemOpenInOfflineButton.IsEnabled = true;
             ProblemOpenToBrowserButton.IsEnabled = true;
 
-            ProblemBookmarkButton.IsChecked = Database.Bookmarks.FindById(problem.ProblemId) != null;
+            ProblemBookmarkButton.IsChecked = ResolvedDatabase.Bookmarks.FindById(problem.ProblemId) != null;
 
             ProblemDetailText.Text = $"Average tried count: {problem.AverageTries}, Accepted user count: {problem.AcceptedUserCount}";
         }

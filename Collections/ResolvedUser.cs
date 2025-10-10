@@ -22,7 +22,7 @@ public class ResolvedUser
     public string Handle { get => User.Handle; set => User.Handle = value; }
 
     public SolvedSocialUser User { get; set; }
-    public SolvedAdditionalInformation Additional { get; set; }
+    public SolvedAdditionalInformation Additional { get; set; } = null!;
     public List<int> AcceptProblems { get; set; } = [];
     public List<int> FailedProblems { get; set; } = [];
     public DateTime LastDownloadTime { get; set; }

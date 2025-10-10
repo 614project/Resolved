@@ -8,7 +8,7 @@ using static Resolved.Scripts.JsonManager;
 
 namespace Resolved.Scripts;
 
-class Configuration
+class ResolvedConfiguration
 {
     /// <summary>
     /// 1. acrylic, 2. mica, 3. mica alt
@@ -16,8 +16,8 @@ class Configuration
     public int backdrop { get; set; } = 3;
     public string? currentUser { get; set; } = null;
 
-    public static Configuration Config => _conf;
-    private static Configuration _conf = new();
+    public static ResolvedConfiguration Config => _conf;
+    private static ResolvedConfiguration _conf = new();
     public static void Load()
     {
         TryRead(ref _conf , "config.json");

@@ -118,16 +118,16 @@ public sealed partial class LoadingPage : Page
     {
         _ = Task.Run(() => {
             UpdateMessage("Loading database");
-            UpdateMessage($"Loading database from '{Path.GetRelativePath("ms-appx:///", Database.SaveFilePath)}'");
+            UpdateMessage($"Loading database from '{Path.GetRelativePath("ms-appx:///", ResolvedDatabase.SaveFilePath)}'");
 
             UpdateMessage("Loading configuration");
-            Configuration.Load();
+            ResolvedConfiguration.Load();
             ResolvedInfo.Load();
 
             UpdateMessage("Almost done");
 
             DispatcherQueue.TryEnqueue(() => {
-                Configuration.BackdropUpdate();
+                ResolvedConfiguration.BackdropUpdate();
                 MainWindow.SelectorBar.SelectedItem = MainWindow.SelectorBar.Items.First();
                 MainWindow.SelectorBar.IsEnabled = true;
                 App.MainWindow.Activate();

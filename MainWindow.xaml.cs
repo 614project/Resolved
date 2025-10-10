@@ -33,7 +33,7 @@ namespace Resolved
 
         private void MainWindow_Closed(object sender , WindowEventArgs args)
         {
-            Configuration.Save();
+            ResolvedConfiguration.Save();
         }
 
         private void MainSelectorBar_SelectionChanged(SelectorBar sender , SelectorBarSelectionChangedEventArgs args)
@@ -42,6 +42,7 @@ namespace Resolved
             if (index == null || index > 6) return;
             MainFrame.Navigate(index switch {
                 0 => typeof(SearchPage),
+                1 => typeof(LevelPage),
                 //2 => typeof(TestPage),
                 5 => typeof(BookmarkPage),
                 6 => typeof(SettingPage),

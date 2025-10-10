@@ -26,6 +26,6 @@ namespace Resolved.Pages
             //ProblemList.UpdateProblems(search.Length == 0 ? SolvedInfo.Problems.Values.ToArray() : SolvedInfo.Problems.Values.Where(p => Matching(p,search)).ToArray());
         }
 
-        public ResolvedProblem[] ProblemSource => Database.Problems.FindAll().ToArray();
+        public ResolvedProblem[] ProblemSource => ResolvedDatabase.Problems.FindAll().ToArray();
     }
 }

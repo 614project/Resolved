@@ -38,7 +38,7 @@ namespace Resolved.Controls.Settings
             //        Backdrops.SelectedIndex = 2;
             //else
             //    Backdrops.SelectedIndex = 0;
-            Backdrops.SelectedIndex = Configuration.Config.backdrop;
+            Backdrops.SelectedIndex = ResolvedConfiguration.Config.backdrop;
         }
 
         bool first = true;
@@ -49,8 +49,8 @@ namespace Resolved.Controls.Settings
                 first = false;
                 return;
             }
-            Configuration.Config.backdrop = Backdrops.SelectedIndex;
-            Configuration.BackdropUpdate();
+            ResolvedConfiguration.Config.backdrop = Backdrops.SelectedIndex;
+            ResolvedConfiguration.BackdropUpdate();
         }
     }
 }

@@ -9,9 +9,7 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
-                <!-- Other merged dictionaries here -->
             </ResourceDictionary.MergedDictionaries>
-            <!-- Other app resources here -->
             <FontFamily x:Key="Outfit">ms-appx:///Assets/Fonts/Outfit.ttf#Outfit</FontFamily>
             <FontFamily x:Key="SUIT">ms-appx:///Assets/Fonts/SUIT.ttf#SUIT</FontFamily>
 
@@ -21,6 +19,22 @@
             <Style TargetType="TextBox">
                 <Setter Property="FontFamily" Value="Outfit"/>
             </Style>
+            
+            <ResourceDictionary.ThemeDictionaries>
+                <ResourceDictionary x:Key="Light">
+                    <SolidColorBrush x:Key="TranslucentListViewBackgroundColor" Color="#05000000" />
+                </ResourceDictionary>
+                <ResourceDictionary x:Key="Dark">
+                    <SolidColorBrush x:Key="TranslucentListViewBackgroundColor" Color="#05ffffff" />
+                </ResourceDictionary>
+                <ResourceDictionary x:Key="Default">
+                    <SolidColorBrush x:Key="TranslucentListViewBackgroundColor" Color="#70808080" />
+                </ResourceDictionary>
+                <ResourceDictionary x:Key="HighContrast">
+                    <SolidColorBrush x:Key="TranslucentListViewBackgroundColor" Color="{ThemeResource SystemColorWindowColor}" />
+                </ResourceDictionary>
+            </ResourceDictionary.ThemeDictionaries>
+            
         </ResourceDictionary>
     </Application.Resources>
 </Application>
