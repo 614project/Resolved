@@ -1,4 +1,4 @@
-﻿using AcNET.Problem;
+using AcNET.Problem;
 using LiteDB;
 
 namespace Resolved.Collections;

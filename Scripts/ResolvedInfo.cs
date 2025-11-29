@@ -1,4 +1,4 @@
-﻿using AcNET;
+using AcNET;
 using AcNET.Problem;
 using AcNET.Site;
 using Resolved.Collections;

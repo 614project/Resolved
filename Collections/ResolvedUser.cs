@@ -1,4 +1,4 @@
-﻿using AcNET.User;
+using AcNET.User;
 using LiteDB;
 using Resolved.Scripts;
 using System;

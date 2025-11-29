@@ -1,12 +1,9 @@
-﻿using AcNET.Problem;
+using AcNET.Problem;
 using Microsoft.UI.Xaml.Controls;
 using Resolved.Collections;
 using Resolved.Scripts;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
-
-// To learn more about WinUI, the WinUI project structure,
-// and more about our project templates, see: http://aka.ms/winui-project-info.
 
 namespace Resolved.Pages;
 

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Page
     x:Class="Resolved.Pages.BookmarkPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -19,7 +19,7 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <TextBlock FontFamily="Outfit" Text="Bookmarks" FontSize="20" Grid.Column="0"/>
-        </Grid> 
+        </Grid>
         <ce:ProblemListView x:Name="ProblemList" ProblemSource="{x:Bind ProblemSource}" Grid.Row="1"/>
     </Grid>
 </Page>

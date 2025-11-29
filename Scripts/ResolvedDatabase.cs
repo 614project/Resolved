@@ -1,4 +1,4 @@
-﻿using LiteDB;
+using LiteDB;
 using Resolved.Collections;
 using System.IO;
 

@@ -1,4 +1,4 @@
-﻿using AcNET.Problem;
+using AcNET.Problem;
 using LiteDB;
 using System.Linq;
 

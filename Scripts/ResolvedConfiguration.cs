@@ -1,9 +1,8 @@
-﻿using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using Newtonsoft.Json;
 using Resolved.Collections;
 using System;
-using System.IO;
 using static Resolved.Scripts.JsonManager;
 
 namespace Resolved.Scripts;
