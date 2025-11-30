@@ -4,6 +4,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using System.Collections.ObjectModel;
 using Resolved.Collections;
+using Microsoft.UI.Xaml.Data;
 
 namespace Resolved.Controls
 {
@@ -97,9 +98,10 @@ namespace Resolved.Controls
             var me = (TextBlock)sender;
 
             me.Text = info.LastDownloadMessage;
-            info.OnDownloadStatusChanged += (_ , msg) => {
-                DispatcherQueue.TryEnqueue(() => me.Text = msg);
-            };
+            me.SetBinding(TextBlock.TextProperty , new Binding {
+                Path = new PropertyPath("LastDownloadMessage"),
+                Mode = BindingMode.OneWay
+            });
         }
     }
 }

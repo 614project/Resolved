@@ -48,7 +48,7 @@
                         <TextBlock Text="{x:Bind Bio, Mode=OneWay}" Grid.Column="2" FontFamily="SUIT" VerticalAlignment="Center"/>
                         <TextBlock Text="{x:Bind ClassText, Mode=OneWay}" Grid.Column="3" FontFamily="Outfit" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                         <TextBlock Text="{x:Bind MaxStreakText, Mode=OneWay}" Grid.Column="4" FontFamily="Outfit" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                        <TextBlock x:Name="DownloadStatusTextBlock" DataContextChanged="DownloadStatusTextBlock_DataContextChanged" Text="{x:Bind LastDownloadMessage}" Grid.Column="5" FontFamily="Outfit" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        <TextBlock x:Name="DownloadStatusTextBlock" DataContextChanged="DownloadStatusTextBlock_DataContextChanged" Text="{x:Bind LastDownloadMessage, Mode=OneWay}" Grid.Column="5" FontFamily="Outfit" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>

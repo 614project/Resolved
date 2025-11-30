@@ -4,6 +4,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Resolved.Collections;
 using Resolved.Scripts;
+using System.ComponentModel;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.System;
@@ -37,12 +38,14 @@ namespace Resolved.Pages
             //이전에 할당한거 제거
             if (nowUser != null)
             {
-                nowUser.OnDownloadStatusChanged -= ActionButtonsUpdate;
+                nowUser.PropertyChanged -= ActionButtonsUpdate;
             }
+
             //새롭게 할당
             if ((nowUser = info) == null)
                 return;
-            nowUser.OnDownloadStatusChanged += ActionButtonsUpdate;
+            nowUser.PropertyChanged += ActionButtonsUpdate;
+
             // 기존 컨트롤 초기화
             ActionStatusTextBlock.Text = info == null ? "Select a user." : "What would you like to do?";
             ActionButtonsSetup();
@@ -94,7 +97,7 @@ namespace Resolved.Pages
                 MainWindow.Frame.Navigate(typeof(SettingPage));
         }
 
-        ResolvedDebouncer<string,SolvedSocialUser?> debouncer = new(
+        readonly ResolvedDebouncer<string,SolvedSocialUser?> debouncer = new(
             name => ResolvedInfo.API.GetUser(name).Result
         );
         SolvedSocialUser? predictAddUser = null;
@@ -102,11 +105,12 @@ namespace Resolved.Pages
         {
             if (predictAddUser == null)
                 return;
+
             ResolvedUser resolvedUser = new(predictAddUser);
-            //SolvedInfo.Users.Add(solvedUser.Handle, solvedUser);
             ResolvedDatabase.Users.Insert(resolvedUser);
             UpdateUserList(resolvedUser.Handle);
             DebouncerOnResult(null , predictAddUser);
+            resolvedUser.PropertyChanged += ActionButtonsUpdate;
             DispatcherQueue.TryEnqueue(resolvedUser.StartDownload);
         }
 
@@ -153,7 +157,13 @@ namespace Resolved.Pages
                 ActionButtonsSetup();
             }
         }
-        private void ActionButtonsUpdate(object? sender, string msg) => DispatcherQueue.TryEnqueue(ActionButtonsSetup);
+        private void ActionButtonsUpdate(object? sender, PropertyChangedEventArgs msg)
+        {
+            if (msg.PropertyName == nameof(ResolvedUser.LastDownloadMessage) || msg.PropertyName == nameof(ResolvedUser.CanDownload))
+            {
+                DispatcherQueue.TryEnqueue(ActionButtonsSetup);
+            }
+        }
 
         private void RemoveButton_Click(object sender , RoutedEventArgs e)
         {
@@ -167,6 +177,7 @@ namespace Resolved.Pages
             MyUserListView_SelectUser(null , null);
             UpdateUserList(Search.Text);
             ActionButtonsSetup();
+            debouncer.Current = Search.Text; // 삭제 및 추가를 대비한 갱신.
         }
 
         private void CurrentUserButton_Click(object sender , RoutedEventArgs e)
