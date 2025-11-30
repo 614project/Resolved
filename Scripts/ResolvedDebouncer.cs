@@ -16,6 +16,10 @@ class ResolvedDebouncer<InType,OutType>(Func<InType,OutType> func) where InType 
         }
     }
     public event EventHandler<OutType>? OnResult = null;
+    public void WaitResult()
+    {
+        updateTask?.GetAwaiter().GetResult();
+    }
     Task? updateTask = null;
 
     private void Update()
@@ -27,7 +31,7 @@ class ResolvedDebouncer<InType,OutType>(Func<InType,OutType> func) where InType 
             if (input.Equals(_current))
             {
                 _current = null;
-                OnResult?.Invoke(null , ret);
+               OnResult?.Invoke(null , ret);
             }
         }
 

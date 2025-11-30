@@ -4,6 +4,7 @@ using AcNET.Site;
 using Resolved.Collections;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -95,12 +96,20 @@ static class ResolvedInfo
         for (int i = 0; i < downloaded.Count; i++) {
             SolvedClassInfo info = downloaded[i];
             for (int trial = 0; trial < 3; trial++) {
-                int[] full = (await GetQueryOrThrow(() => API.GetSearchProblemAsync($"in_class:{info.Class}"))).Items.Select(p => p.ProblemId).ToArray();
-                int[] essential = (await GetQueryOrThrow(() => API.GetSearchProblemAsync($"in_class_essentials:{info.Class}"))).Items.Select(p => p.ProblemId).ToArray();
+                try
+                {
+                    int[] full = (await GetQueryOrThrow(() => API.GetSearchProblemAsync($"in_class:{info.Class}"))).Items.Select(p => p.ProblemId).ToArray();
+                    int[] essential = (await GetQueryOrThrow(() => API.GetSearchProblemAsync($"in_class_essentials:{info.Class}"))).Items.Select(p => p.ProblemId).ToArray();
 
-                ResolvedClass latest = new(i + 1, full, essential, info);
-                ResolvedDatabase.Classis.Upsert(latest);
-                break;
+                    ResolvedClass latest = new(i + 1, full, essential, info);
+                    ResolvedDatabase.Classis.Upsert(latest);
+                    break;
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"Failed to download class {info.Class} (trial {trial + 1}): {ex.Message}");
+                    continue;
+                }
             }
         }
     }
