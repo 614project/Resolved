@@ -3,13 +3,15 @@ using LiteDB;
 using Resolved.Scripts;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
 namespace Resolved.Collections;
 
-public class ResolvedUser
+public class ResolvedUser : INotifyPropertyChanged
 {
     public ResolvedUser()
     {
@@ -26,7 +28,21 @@ public class ResolvedUser
     public List<int> AcceptProblems { get; set; } = [];
     public List<int> FailedProblems { get; set; } = [];
     public DateTime LastDownloadTime { get; set; }
-    public string LastDownloadMessage { get; set; } = "no downloaded yet.";
+
+    public string LastDownloadMessage
+    {
+        get => _lastDownMsg; 
+        set 
+        { 
+            if (_lastDownMsg == value) return;
+            _lastDownMsg = value;
+            PropertyChanged?.Invoke(this, new(nameof(LastDownloadMessage))); 
+            PropertyChanged?.Invoke(this, new(nameof(CanDownload))); 
+        }
+
+    }
+    private string _lastDownMsg = "no downloaded yet.";
+
 
     public string Bio => User.Bio;
     public string MaxStreakText => $"Max {User.MaxStreak} day streak";
@@ -37,19 +53,18 @@ public class ResolvedUser
     public bool IsDownloaded => LastDownloadTime != DateTime.MinValue;
     public string LastTimeText => LastDownloadTime.ToString(@"yyyy\-MM\-dd HH\:mm\:ss");
 
-    public event EventHandler<string>? OnDownloadStatusChanged = null;
     public async void StartDownload()
     {
-        OnDownloadStatusChanged?.Invoke(this , LastDownloadMessage = "downloading...");
+        LastDownloadMessage = "downloading...";
         var ret = await DownloadAsync();
         if (ret != null)
         {
-            OnDownloadStatusChanged?.Invoke(this , LastDownloadMessage = "download failed.");
+            LastDownloadMessage = "download failed.";
             Debug.WriteLine(ret.Message);
         }
         else
         {
-            OnDownloadStatusChanged?.Invoke(this , LastDownloadMessage = LastTimeText);
+            LastDownloadMessage = LastTimeText;
         }
     }
 
@@ -78,6 +93,14 @@ public class ResolvedUser
         LastDownloadTime = startDownload;
         return null;
     }
+
+#region Support INotifyPropertyChanged
+    public event PropertyChangedEventHandler? PropertyChanged = null;
+    private void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+#endregion
 
     public static readonly ResolvedUser Empty = new() { User = new() { Handle = "(Empty)" , Bio = "No solved.ac user" } };
 }
