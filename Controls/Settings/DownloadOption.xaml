@@ -14,6 +14,6 @@
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
         <ProgressBar Grid.Column="0" Visibility="Collapsed" x:Name="MyProgress" Margin="0,0,8,0"/>
-        <Button Grid.Column="1" FontFamily="Outfit" Content="Download start" x:Name="MyButton" Click="DownloadStart" ToolTipService.ToolTip="Start download problems. (can't cancel while downloding)"/>
+        <Button Grid.Column="1" FontFamily="Outfit" Content="Download start" x:Name="MyButton" Click="DownloadStart" ToolTipService.ToolTip="Start download problems. (can't cancel while downloading)"/>
     </Grid>
 </UserControl>

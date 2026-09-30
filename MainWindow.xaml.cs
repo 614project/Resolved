@@ -34,6 +34,7 @@ namespace Resolved
         private void MainWindow_Closed(object sender , WindowEventArgs args)
         {
             Configuration.Save();
+            Database.Close();
         }
 
         private void MainSelectorBar_SelectionChanged(SelectorBar sender , SelectorBarSelectionChangedEventArgs args)

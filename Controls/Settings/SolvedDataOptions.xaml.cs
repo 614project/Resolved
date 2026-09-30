@@ -15,7 +15,6 @@ using Microsoft.UI.Xaml.Navigation;
 using Resolved.Scripts;
 using Windows.System;
 using Resolved.Pages;
-using Microsoft.UI.Composition.Scenes;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -31,13 +30,13 @@ namespace Resolved.Controls.Settings
 
         public void UpdateStatus()
         {
-            LastWrtieTimeCard.Content = LastWriteTime;
-            CurrentUserCard.Content = CurrentUesr;
+            LastWriteTimeCard.Content = LastWriteTime;
+            CurrentUserCard.Content = CurrentUserText;
         }
 
         private string DataSavePath => JsonManager.SaveFolder;
         private string LastWriteTime => ResolvedInfo.GetLastWriteTime()?.ToString(@"yyyy\-MM\-dd HH\:mm\:ss") ?? "(No saved)";
-        private string CurrentUesr => Configuration.Config.currentUser ?? "(None)";
+        private string CurrentUserText => Configuration.Config.CurrentUser ?? "(None)";
 
         private async void OpenSaveFolderWithFileExplorer(object sender , RoutedEventArgs e)
         {

@@ -21,7 +21,6 @@
   <ItemGroup>
     <None Remove="Controls\Card.xaml" />
     <None Remove="Controls\Checker.xaml" />
-    <None Remove="Controls\NoImplementedPage.xaml" />
     <None Remove="Controls\ProblemListView.xaml" />
     <None Remove="Controls\ResolvedIcon.xaml" />
     <None Remove="Controls\Settings\AppearanceOption.xaml" />
@@ -68,6 +67,7 @@
     <PackageReference Include="LiteDB" Version="5.0.21" />
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.4188" />
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.7.250513003" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="System.Private.Uri" Version="4.3.2" />
   </ItemGroup>
   <ItemGroup>
@@ -82,11 +82,6 @@
   </ItemGroup>
   <ItemGroup>
     <Page Update="Pages\NoImplementedPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-  </ItemGroup>
-  <ItemGroup>
-    <Page Update="Controls\NoImplementedPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
@@ -151,11 +146,6 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Page Update="Controls\BackdropOption.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-  </ItemGroup>
-  <ItemGroup>
     <Page Update="Pages\SettingPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -189,8 +179,8 @@
   <PropertyGroup>
     <PublishReadyToRun Condition="'$(Configuration)' == 'Debug'">False</PublishReadyToRun>
     <PublishReadyToRun Condition="'$(Configuration)' != 'Debug'">True</PublishReadyToRun>
-    <PublishTrimmed Condition="'$(Configuration)' == 'Debug'">False</PublishTrimmed>
-    <PublishTrimmed Condition="'$(Configuration)' != 'Debug'">True</PublishTrimmed>
+    <!-- LiteDB와 Newtonsoft.Json은 리플렉션으로 직렬화하므로 트리밍하면 런타임에 깨질 수 있다. -->
+    <PublishTrimmed>False</PublishTrimmed>
     <PackageCertificateThumbprint>FCB6A38EE69CD98612906B847B36A2A00904534B</PackageCertificateThumbprint>
     <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
   </PropertyGroup>
