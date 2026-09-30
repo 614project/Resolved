@@ -28,17 +28,7 @@ namespace Resolved.Controls.Settings
 
         private void BackdropsLoaded(object sender,RoutedEventArgs args)
         {
-            //var back = App.MainWindow.SystemBackdrop;
-            //if (back is DesktopAcrylicBackdrop)
-            //    Backdrops.SelectedIndex = 1;
-            //else if (back is MicaBackdrop mica)
-            //    if (mica.Kind == Microsoft.UI.Composition.SystemBackdrops.MicaKind.BaseAlt)
-            //        Backdrops.SelectedIndex = 3;
-            //    else
-            //        Backdrops.SelectedIndex = 2;
-            //else
-            //    Backdrops.SelectedIndex = 0;
-            Backdrops.SelectedIndex = Configuration.Config.backdrop;
+            Backdrops.SelectedIndex = Configuration.Config.Backdrop;
         }
 
         bool first = true;
@@ -49,8 +39,9 @@ namespace Resolved.Controls.Settings
                 first = false;
                 return;
             }
-            Configuration.Config.backdrop = Backdrops.SelectedIndex;
+            Configuration.Config.Backdrop = Backdrops.SelectedIndex;
             Configuration.BackdropUpdate();
+            Configuration.Save();
         }
     }
 }

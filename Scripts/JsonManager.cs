@@ -5,7 +5,21 @@ namespace Resolved.Scripts;
 
 class JsonManager
 {
-    public static string SaveFolder { get; } = Windows.Storage.ApplicationData.Current.LocalFolder.Path;
+    public static string SaveFolder { get; } = GetSaveFolder();
+
+    private static string GetSaveFolder()
+    {
+        try
+        {
+            return Windows.Storage.ApplicationData.Current.LocalFolder.Path;
+        } catch
+        {
+            //패키지 ID가 없는(Unpackaged) 실행에서는 ApplicationData를 쓸 수 없다.
+            string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) , "resolved.ce");
+            Directory.CreateDirectory(path);
+            return path;
+        }
+    }
 
     public static bool TryRead<T>(ref T target , string path)
     {

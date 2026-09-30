@@ -6,10 +6,10 @@
     xmlns:local="using:Resolved.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:this="using:AcNET.Problem"
+    xmlns:re="using:Resolved.Collections"
     xmlns:ce="using:Resolved.Controls"
     mc:Ignorable="d"
-    Loading="ProblemListViewLoading">
+    Loaded="ProblemListView_Loaded">
 
     <Grid HorizontalAlignment="Stretch">
         <Grid.RowDefinitions>
@@ -34,9 +34,9 @@
             </SelectorBar>
             <TextBox x:Name="ProblemSearchTextBox" TextChanged="ProblemSearchTextBox_TextChanged" Grid.Column="2" VerticalAlignment="Bottom" Margin="0,0,0,8" HorizontalAlignment="Right" FontFamily="Outfit" PlaceholderText="Search" CornerRadius="4" MinWidth="300"/>
         </Grid>
-        <ListView Grid.Row="1" Name="ProblemsListView" ItemsSource="{x:Bind ProblemCollection}" Background="#10ffffff" CornerRadius="4" HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" SelectionChanged="ProblemsListView_SelectionChanged">
+        <ListView Grid.Row="1" Name="ProblemsListView" Background="#10ffffff" CornerRadius="4" HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" SelectionChanged="ProblemsListView_SelectionChanged">
             <ListView.ItemTemplate>
-                <DataTemplate x:DataType="this:SolvedTaggedProblem">
+                <DataTemplate x:DataType="re:ResolvedProblem">
                     <Grid HorizontalAlignment="Stretch">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="100"/>
@@ -45,7 +45,7 @@
                         </Grid.ColumnDefinitions>
                         <TextBlock Text="{x:Bind GetTierName}" Foreground="{x:Bind GetTierColor}" Grid.Column="0" FontFamily="Outfit" VerticalAlignment="Center"/>
                         <TextBlock x:Name="ProblemIdTextBlock" DataContextChanged="ProblemIdTextBlock_DataContextChanged" Text="{x:Bind ProblemId}" Grid.Column="1" Foreground="DarkSlateGray" FontFamily="Outfit" VerticalAlignment="Center"/>
-                        <TextBlock x:Name="ProblemTitleTextBlock" Text="{x:Bind TitleKo}" Grid.Column="2" FontFamily="SUIT" VerticalAlignment="Center"/>
+                        <TextBlock x:Name="ProblemTitleTextBlock" Text="{x:Bind GetTitle()}" Grid.Column="2" FontFamily="SUIT" VerticalAlignment="Center"/>
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>

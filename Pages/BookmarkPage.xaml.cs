@@ -21,6 +21,7 @@ namespace Resolved.Pages
             this.InitializeComponent();
         }
 
-        public ResolvedProblem[] ProblemSource => Database.Bookmarks.FindAll().Select(bookmark => bookmark.Problem).ToArray();
+        //문제 데이터가 없는 북마크는 건너뛴다.
+        public ResolvedProblem[] ProblemSource => Database.Bookmarks.FindAll().Select(bookmark => bookmark.Problem).OfType<ResolvedProblem>().ToArray();
     }
 }
