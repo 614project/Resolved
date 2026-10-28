@@ -1,4 +1,5 @@
-﻿using AcNET.User;
+﻿using AcNET;
+using AcNET.User;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
@@ -8,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -92,7 +94,12 @@ namespace Resolved.Pages
         }
 
         readonly Debouncer<string,SolvedSocialUser?> debouncer = new(
-            async (name , _) => (await ResolvedInfo.API.GetUserAsync(name)).Result,
+            async (name , _) => {
+                (SolvedSocialUser? user, Exception? ex) = await ResolvedInfo.API.GetUserAsync(Uri.EscapeDataString(name));
+                if (ex is not null and not SolvedAPIException { StatusCode: HttpStatusCode.NotFound })
+                    throw ex;
+                return user;
+            },
             TimeSpan.FromMilliseconds(300)
         );
         SolvedSocialUser? predictAddUser = null;
@@ -167,6 +174,8 @@ namespace Resolved.Pages
             MyUserListView_SelectUser(null , null);
             UpdateUserList(Search.Text);
             ActionButtonsSetup();
+            if (Search.Text.Length > 0)
+                debouncer.Push(Search.Text);
         }
 
         private void CurrentUserButton_Click(object sender , RoutedEventArgs e)

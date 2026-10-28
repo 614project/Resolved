@@ -60,7 +60,17 @@ public class ResolvedUser : INotifyPropertyChanged
     private void ChangeDownloadStatus(string message)
     {
         LastDownloadMessage = message;
+        PropertyChanged?.Invoke(this , new(nameof(CanDownload)));
         OnDownloadStatusChanged?.Invoke(this , message);
+    }
+
+    private void NotifyUserPropertiesChanged()
+    {
+        PropertyChanged?.Invoke(this , new(nameof(TierAndRatingText)));
+        PropertyChanged?.Invoke(this , new(nameof(GetTierColor)));
+        PropertyChanged?.Invoke(this , new(nameof(Bio)));
+        PropertyChanged?.Invoke(this , new(nameof(ClassText)));
+        PropertyChanged?.Invoke(this , new(nameof(MaxStreakText)));
     }
 
     public async void StartDownload()
@@ -90,6 +100,7 @@ public class ResolvedUser : INotifyPropertyChanged
         }
         else
         {
+            NotifyUserPropertiesChanged();
             ChangeDownloadStatus(LastTimeText);
         }
     }
@@ -100,24 +111,26 @@ public class ResolvedUser : INotifyPropertyChanged
         try
         {
             string handle = User.Handle;
+            string escapedHandle = Uri.EscapeDataString(handle);
             DateTime startDownload = DateTime.Now;
             Exception? ex;
+            //유저 기본 정보
+            (var user, ex) = await ResolvedInfo.API.GetUserAsync(escapedHandle).ConfigureAwait(false);
+            if (user == null)
+                return ex ?? new Exception("Failed to download user information.");
             //추가 정보
-            (var addition, ex) = await ResolvedInfo.API.GetUserAdditionalInfoAsync(handle);
+            (var addition, ex) = await ResolvedInfo.API.GetUserAdditionalInfoAsync(escapedHandle).ConfigureAwait(false);
             if (addition == null)
                 return ex ?? new Exception("Failed to download additional information.");
-            //맞은 문제
-            (var query, ex) = await ResolvedInfo.API.GetSearchProblemAsync($"s@{handle}");
-            if (query == null)
-                return ex ?? new Exception("Failed to download accepted problems.");
-            //실패한 문제
-            (var query2, ex) = await ResolvedInfo.API.GetSearchProblemAsync($"t@{handle} -s@{handle}");
-            if (query2 == null)
-                return ex ?? new Exception("Failed to download failed problems.");
+            //맞은 문제 (페이지네이션으로 전체 조회)
+            List<int> accepted = await ResolvedInfo.SearchProblemIdsAsync($"s@{handle}").ConfigureAwait(false);
+            //실패한 문제 (페이지네이션으로 전체 조회)
+            List<int> failed = await ResolvedInfo.SearchProblemIdsAsync($"t@{handle} -s@{handle}").ConfigureAwait(false);
             //성공!
+            this.User = user;
             this.Additional = addition;
-            this.AcceptProblems = query.Items.Select(q => q.ProblemId).ToList();
-            this.FailedProblems = query2.Items.Select(q => q.ProblemId).ToList();
+            this.AcceptProblems = accepted;
+            this.FailedProblems = failed;
             LastDownloadTime = startDownload;
             return null;
         } catch (Exception ex)

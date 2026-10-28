@@ -52,6 +52,7 @@ static class ResolvedInfo
     public static bool IsDownloading { get; private set; } = false;
     public static event EventHandler<double>? OnProgressChanged = null;
     public static event EventHandler<Exception?>? OnDownloadEnd = null;
+    public static event EventHandler? OnDataChanged = null;
     public async static void Download()
     {
         if (IsDownloading)
@@ -78,6 +79,27 @@ static class ResolvedInfo
         //실패했더라도 일부는 이미 저장됐을 수 있다.
         Interlocked.Increment(ref _problemsVersion);
         OnDownloadEnd?.Invoke(null , error);
+        OnDataChanged?.Invoke(null , EventArgs.Empty);
+    }
+
+    /// <summary>
+    /// solved.ac 문제 검색 API는 페이지당 최대 50개만 반환하므로,
+    /// 모든 페이지를 순회해 조건에 맞는 전체 문제 ID 목록을 가져옵니다.
+    /// </summary>
+    public static async Task<List<int>> SearchProblemIdsAsync(string query)
+    {
+        List<int> ids = [];
+        string escapedQuery = Uri.EscapeDataString(query);
+        for (int page = 1 ; ; page++)
+        {
+            var result = (await API.GetSearchProblemAsync($"{escapedQuery}&page={page}").ConfigureAwait(false)).GetResultOrThrow();
+            if (result.Items == null || result.Items.Count == 0)
+                break;
+            ids.AddRange(result.Items.Select(p => p.ProblemId));
+            if (ids.Count >= result.Count)
+                break;
+        }
+        return ids;
     }
 
     private const int ProblemBatchSize = 100;
@@ -114,8 +136,8 @@ static class ResolvedInfo
         {
             SolvedClassInfo info = downloaded[i];
 
-            int[] full = (await API.GetSearchProblemAsync($"in_class:{info.Class}").ConfigureAwait(false)).GetResultOrThrow().Items.Select(p => p.ProblemId).ToArray();
-            int[] essential = (await API.GetSearchProblemAsync($"in_class_essentials:{info.Class}").ConfigureAwait(false)).GetResultOrThrow().Items.Select(p => p.ProblemId).ToArray();
+            int[] full = (await SearchProblemIdsAsync($"in_class:{info.Class}").ConfigureAwait(false)).ToArray();
+            int[] essential = (await SearchProblemIdsAsync($"in_class_essentials:{info.Class}").ConfigureAwait(false)).ToArray();
 
             ResolvedClass latest = new(i + 1 , full , essential , info);
             Database.Classes.Upsert(latest);
@@ -132,15 +154,18 @@ static class ResolvedInfo
         Stats = new();
         TryDelete(StatsFile);
         Interlocked.Increment(ref _problemsVersion);
+        OnDataChanged?.Invoke(null , EventArgs.Empty);
     }
     public static void RemoveBookmarks()
     {
         Database.Bookmarks.DeleteAll();
+        OnDataChanged?.Invoke(null , EventArgs.Empty);
     }
     public static void RemoveUsers()
     {
         Database.Users.DeleteAll();
         Configuration.Config.CurrentUser = null;
         Configuration.Save();
+        OnDataChanged?.Invoke(null , EventArgs.Empty);
     }
 }

@@ -26,6 +26,24 @@ namespace Resolved.Controls.Settings
         public SolvedDataOptions()
         {
             this.InitializeComponent();
+            this.Loaded += this.SolvedDataOptions_Loaded;
+            this.Unloaded += this.SolvedDataOptions_Unloaded;
+        }
+
+        private void SolvedDataOptions_Loaded(object sender , RoutedEventArgs e)
+        {
+            ResolvedInfo.OnDataChanged += this.ResolvedInfo_OnDataChanged;
+            UpdateStatus();
+        }
+
+        private void SolvedDataOptions_Unloaded(object sender , RoutedEventArgs e)
+        {
+            ResolvedInfo.OnDataChanged -= this.ResolvedInfo_OnDataChanged;
+        }
+
+        private void ResolvedInfo_OnDataChanged(object? sender , EventArgs e)
+        {
+            DispatcherQueue.TryEnqueue(UpdateStatus);
         }
 
         public void UpdateStatus()

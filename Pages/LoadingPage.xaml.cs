@@ -66,6 +66,7 @@ public sealed partial class LoadingPage : Page
             }
 
             DispatcherQueue.TryEnqueue(() => {
+                timer.Stop();
                 Configuration.BackdropUpdate();
                 MainWindow.SelectorBar.SelectedItem = MainWindow.SelectorBar.Items.First();
                 MainWindow.SelectorBar.IsEnabled = true;

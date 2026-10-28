@@ -42,7 +42,7 @@ namespace Resolved.Controls
         /// <returns>현재 유저 정보가 바뀌었으면 true</returns>
         private bool ReloadCurrentUser()
         {
-            ResolvedUser? user = Configuration.Config.CurrentUser is string handle ? Database.Users.FindById(handle) : null;
+            ResolvedUser? user = Configuration.Config.CurrentUser is string handle ? Database.Users?.FindById(handle) : null;
             DateTime downloadTime = user?.LastDownloadTime ?? default;
             if (user?.Handle == loadedUserHandle && downloadTime == loadedUserDownloadTime)
                 return false;
@@ -58,7 +58,10 @@ namespace Resolved.Controls
         {
             //설정에서 현재 유저가 바뀌었거나 다시 다운로드했을 수 있다.
             if (ReloadCurrentUser())
+            {
+                ProblemsListView.ItemsSource = null;
                 PushProblems(Cache);
+            }
         }
 
         readonly Comparer<ResolvedProblem>[] SortOptions = [
@@ -83,12 +86,16 @@ namespace Resolved.Controls
         }
         private void PushProblems(ResolvedProblem[] list)
         {
+            if (ProblemsListView == null)
+                return;
             //수만 개를 하나씩 Add하면 그만큼 CollectionChanged가 발생하므로 목록을 통째로 교체한다.
             //같은 배열을 다시 넣으면 갱신되지 않으므로 항상 새 배열을 만든다.
             ProblemsListView.ItemsSource = ascending ? list.ToArray() : list.AsEnumerable().Reverse().ToArray();
         }
         private void SortBySelector_SelectionChanged(SelectorBar sender , SelectorBarSelectionChangedEventArgs args)
         {
+            if (sender.SelectedItem == null)
+                return;
             int now = sender.SelectedItem.TabIndex;
             if (now > 4)
             {
@@ -178,6 +185,9 @@ namespace Resolved.Controls
 
         private void ApplySearch()
         {
+            if (ProblemSearchTextBox == null || ProblemsListView == null)
+                return;
+            ReloadCurrentUser();
             ResolvedProblem[] source = ProblemSource ?? [];
             string search = ProblemSearchTextBox.Text;
             //정렬이 원본 배열을 바꾸지 않도록 항상 복사본을 넘긴다.

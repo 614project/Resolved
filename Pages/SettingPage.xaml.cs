@@ -27,13 +27,12 @@ namespace Resolved.Pages
         public SettingPage()
         {
             this.InitializeComponent();
-            MainWindow.Frame.Navigated += this.Frame_Navigated;
         }
 
-        private void Frame_Navigated(object sender , NavigationEventArgs e)
+        protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            if (e.Content is SettingPage)
-                SolvedDataOptionsControl.UpdateStatus();
+            base.OnNavigatedTo(e);
+            SolvedDataOptionsControl.UpdateStatus();
         }
     }
 }

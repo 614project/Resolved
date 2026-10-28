@@ -56,6 +56,8 @@ namespace Resolved.Controls
         }
         private void SortBySelector_SelectionChanged(SelectorBar sender , SelectorBarSelectionChangedEventArgs args)
         {
+            if (sender.SelectedItem == null)
+                return;
             int now = sender.SelectedItem.TabIndex;
             if (now > 4)
             {
