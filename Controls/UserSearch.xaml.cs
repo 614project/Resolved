@@ -32,8 +32,8 @@ namespace Resolved.Controls
 
         private void UserSearch_SizeChanged(object sender , SizeChangedEventArgs e)
         {
-            Background.Width = e.NewSize.Width;
-            Canvas.SetTop(Profile , Background.ActualHeight);
+            BackgroundImage.Width = e.NewSize.Width;
+            Canvas.SetTop(Profile , BackgroundImage.ActualHeight);
             Canvas.SetTop(Handle , Profile.ActualOffset.Y);
         }
 
@@ -70,9 +70,9 @@ namespace Resolved.Controls
                 (var background, _) = await ResolvedInfo.API.GetBackgroundAsync(info.BackgroundId);
                 DispatcherQueue.TryEnqueue(() => {
                     if (background == null)
-                        Background.Source = null;
+                        BackgroundImage.Source = null;
                     else
-                        Background.Source = new BitmapImage(new Uri(background.BackgroundImageUrl));
+                        BackgroundImage.Source = new BitmapImage(new Uri(background.BackgroundImageUrl));
                 });
             }
         }

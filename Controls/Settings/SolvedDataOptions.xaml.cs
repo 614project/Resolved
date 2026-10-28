@@ -15,7 +15,6 @@ using Microsoft.UI.Xaml.Navigation;
 using Resolved.Scripts;
 using Windows.System;
 using Resolved.Pages;
-using Microsoft.UI.Composition.Scenes;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -27,17 +26,35 @@ namespace Resolved.Controls.Settings
         public SolvedDataOptions()
         {
             this.InitializeComponent();
+            this.Loaded += this.SolvedDataOptions_Loaded;
+            this.Unloaded += this.SolvedDataOptions_Unloaded;
+        }
+
+        private void SolvedDataOptions_Loaded(object sender , RoutedEventArgs e)
+        {
+            ResolvedInfo.OnDataChanged += this.ResolvedInfo_OnDataChanged;
+            UpdateStatus();
+        }
+
+        private void SolvedDataOptions_Unloaded(object sender , RoutedEventArgs e)
+        {
+            ResolvedInfo.OnDataChanged -= this.ResolvedInfo_OnDataChanged;
+        }
+
+        private void ResolvedInfo_OnDataChanged(object? sender , EventArgs e)
+        {
+            DispatcherQueue.TryEnqueue(UpdateStatus);
         }
 
         public void UpdateStatus()
         {
-            LastWrtieTimeCard.Content = LastWriteTime;
-            CurrentUserCard.Content = CurrentUesr;
+            LastWriteTimeCard.Content = LastWriteTime;
+            CurrentUserCard.Content = CurrentUserText;
         }
 
         private string DataSavePath => JsonManager.SaveFolder;
         private string LastWriteTime => ResolvedInfo.GetLastWriteTime()?.ToString(@"yyyy\-MM\-dd HH\:mm\:ss") ?? "(No saved)";
-        private string CurrentUesr => Configuration.Config.currentUser ?? "(None)";
+        private string CurrentUserText => Configuration.Config.CurrentUser ?? "(None)";
 
         private async void OpenSaveFolderWithFileExplorer(object sender , RoutedEventArgs e)
         {

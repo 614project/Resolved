@@ -1,13 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Resolved.Scripts;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Diagnostics;
 
@@ -16,63 +11,6 @@ using System.Diagnostics;
 
 namespace Resolved.Pages;
 
-//public sealed partial class LoadingPage : Page
-//{
-//    DispatcherTimer timer = new DispatcherTimer {
-//        Interval = TimeSpan.FromSeconds(1)
-//    };
-//    TimeSpan time;
-//    public LoadingPage()
-//    {
-//        this.InitializeComponent();
-//        ResolvedInfo.OnLoadingEvent += this.Solved_OnLoadingEvent;
-//        timer.Tick += this.Timer_Tick;
-//        timer.Start();
-//        time = DateTime.Now.TimeOfDay;
-//    }
-
-//    private void Solved_OnLoadingEvent(object? sender , string e)
-//    {
-//        message = e;
-
-//        DispatcherQueue.TryEnqueue(() => {
-//            StatusTextBox.Text = $"Please wait, {message}... ({(DateTime.Now.TimeOfDay - time).ToString(@"m\:ss")})";
-//        });
-//    }
-
-
-//    private string message = string.Empty;
-//    private void Timer_Tick(object? sender , object e)
-//    {
-//        if (StatusTextBox.Visibility != Visibility.Visible)
-//        {
-//            timer.Stop();
-//            return;
-//        }
-//        StatusTextBox.Text = $"Please wait, {message}... ({(DateTime.Now.TimeOfDay - time).ToString(@"m\:ss")})";
-//    }
-
-//    private void Grid_Loaded(object sender , RoutedEventArgs e)
-//    {
-//        Task.Run(() => {
-//            message = "Loading database";
-//            Database.Problems.FindAll();
-
-//            message = "Loading configuration";
-//            Configuration.Load();
-//            ResolvedInfo.Load();
-
-//            message = "Almost done";
-//            DispatcherQueue.TryEnqueue(() => {
-//                Configuration.BackdropUpdate();
-//                MainWindow.SelectorBar.SelectedItem = MainWindow.SelectorBar.Items.First();
-//                MainWindow.SelectorBar.IsEnabled = true;
-//                App.MainWindow.Activate();
-//            });
-//        });
-//    }
-//}
-
 public sealed partial class LoadingPage : Page
 {
     DispatcherTimer timer = new DispatcherTimer {
@@ -80,8 +18,8 @@ public sealed partial class LoadingPage : Page
     };
 
     TimeSpan startTime;
-    private string _message = "Starting...";
-    private readonly object _lock = new();
+    //백그라운드 스레드에서 쓰고 UI 스레드에서 읽는다.
+    private volatile string _message = "Starting...";
 
     public LoadingPage()
     {
@@ -89,24 +27,13 @@ public sealed partial class LoadingPage : Page
         timer.Tick += Timer_Tick;
         timer.Start();
         startTime = DateTime.Now.TimeOfDay;
+        this.Unloaded += (_ , _) => timer.Stop();
     }
 
     private void Timer_Tick(object? sender , object e)
     {
-        if (StatusTextBox.Visibility != Visibility.Visible)
-        {
-            timer.Stop();
-            return;
-        }
-
-        string messageSnapshot;
-        lock (_lock)
-        {
-            messageSnapshot = _message;
-        }
-
         var elapsed = (DateTime.Now.TimeOfDay - startTime).ToString(@"m\:ss");
-        StatusTextBox.Text = $"Please wait, {messageSnapshot}... ({elapsed})";
+        StatusTextBox.Text = $"Please wait, {_message}... ({elapsed})";
     }
 
     private void UpdateMessage(string newMessage)
@@ -117,16 +44,29 @@ public sealed partial class LoadingPage : Page
     private void Grid_Loaded(object sender , RoutedEventArgs e)
     {
         _ = Task.Run(() => {
-            UpdateMessage("Loading database");
-            UpdateMessage($"Loading database from '{Path.GetRelativePath("ms-appx:///", Database.SaveFilePath)}'");
+            try
+            {
+                UpdateMessage($"Loading database from '{Database.SaveFilePath}'");
+                Database.Open();
 
-            UpdateMessage("Loading configuration");
-            Configuration.Load();
-            ResolvedInfo.Load();
+                UpdateMessage("Loading configuration");
+                Configuration.Load();
+                ResolvedInfo.Load();
 
-            UpdateMessage("Almost done");
+                UpdateMessage("Almost done");
+            } catch (Exception ex)
+            {
+                //예외를 삼키면 로딩 화면에서 멈춘 채로 남으므로 화면에 알린다.
+                Debug.WriteLine(ex);
+                DispatcherQueue.TryEnqueue(() => {
+                    timer.Stop();
+                    StatusTextBox.Text = $"Failed to start: {ex.Message}";
+                });
+                return;
+            }
 
             DispatcherQueue.TryEnqueue(() => {
+                timer.Stop();
                 Configuration.BackdropUpdate();
                 MainWindow.SelectorBar.SelectedItem = MainWindow.SelectorBar.Items.First();
                 MainWindow.SelectorBar.IsEnabled = true;

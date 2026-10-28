@@ -9,7 +9,7 @@
     mc:Ignorable="d">
 
     <Grid RowDefinitions="Auto, Auto">
-        <Image x:Name="Background" Source="ms-appx:///Assets/Images/default.png" HorizontalAlignment="Stretch" Height="400" Stretch="UniformToFill" Grid.Row="0"/>
+        <Image x:Name="BackgroundImage" Source="ms-appx:///Assets/Images/default.png" HorizontalAlignment="Stretch" Height="400" Stretch="UniformToFill" Grid.Row="0"/>
         <Grid Grid.Row="1" MaxWidth="1000" HorizontalAlignment="Stretch" ColumnDefinitions="Auto, *" Margin="0,8,0,0">
             <PersonPicture x:Name="Profile" DisplayName="?" Width="120" Height="120" Grid.Column="0"/>
             <Grid Grid.Column="1" HorizontalAlignment="Stretch" RowDefinitions="Auto, Auto, Auto, Auto" VerticalAlignment="Center">

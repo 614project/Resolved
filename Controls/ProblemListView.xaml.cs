@@ -3,12 +3,9 @@ using System.Collections.Generic;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Resolved.Scripts;
-using System.Collections.ObjectModel;
-using AcNET.Problem;
 using Microsoft.UI.Xaml.Media;
 using CommunityToolkit.WinUI.Helpers;
 using Microsoft.UI.Xaml.Controls.Primitives;
-using System.Diagnostics;
 using System.Linq;
 using Resolved.Collections;
 using Windows.System;
@@ -18,23 +15,52 @@ namespace Resolved.Controls
     public sealed partial class ProblemListView : UserControl
     {
         public static readonly DependencyProperty ProblemSourceProperty = DependencyProperty.Register(
-            "ProblemSource" , typeof(ResolvedProblem[]) , typeof(ProblemListView) , new PropertyMetadata("ProblemSource")
+            "ProblemSource" , typeof(ResolvedProblem[]) , typeof(ProblemListView) , new PropertyMetadata(null , OnProblemSourceChanged)
         );
-        public ResolvedProblem[] ProblemSource {
-            get => (ResolvedProblem[])GetValue(ProblemSourceProperty);
+        public ResolvedProblem[]? ProblemSource {
+            get => (ResolvedProblem[]?)GetValue(ProblemSourceProperty);
             set => SetValue(ProblemSourceProperty , value);
         }
-
-        ResolvedUser? CurrentUser = null;
+        private static void OnProblemSourceChanged(DependencyObject d , DependencyPropertyChangedEventArgs e)
+        {
+            ((ProblemListView)d).ApplySearch();
+        }
 
         int prevIndex = 0;
         bool ascending = true;
         public ProblemListView()
         {
             this.InitializeComponent();
-            if (Configuration.CurrentUser is string handle)
+            ReloadCurrentUser();
+        }
+
+        //현재 유저의 맞은/실패한 문제 (색칠용)
+        string? loadedUserHandle = null;
+        DateTime loadedUserDownloadTime = default;
+        HashSet<int> acceptedProblems = [];
+        HashSet<int> failedProblems = [];
+        /// <returns>현재 유저 정보가 바뀌었으면 true</returns>
+        private bool ReloadCurrentUser()
+        {
+            ResolvedUser? user = Configuration.Config.CurrentUser is string handle ? Database.Users?.FindById(handle) : null;
+            DateTime downloadTime = user?.LastDownloadTime ?? default;
+            if (user?.Handle == loadedUserHandle && downloadTime == loadedUserDownloadTime)
+                return false;
+
+            loadedUserHandle = user?.Handle;
+            loadedUserDownloadTime = downloadTime;
+            acceptedProblems = new(user?.AcceptProblems ?? []);
+            failedProblems = new(user?.FailedProblems ?? []);
+            return true;
+        }
+
+        private void ProblemListView_Loaded(object sender , RoutedEventArgs e)
+        {
+            //설정에서 현재 유저가 바뀌었거나 다시 다운로드했을 수 있다.
+            if (ReloadCurrentUser())
             {
-                this.CurrentUser = Database.Users.FindById(handle);
+                ProblemsListView.ItemsSource = null;
+                PushProblems(Cache);
             }
         }
 
@@ -51,7 +77,6 @@ namespace Resolved.Controls
             Cache = list;
             if (SortBySelector.SelectedItem == null)
                 return;
-            ProblemCollection.Clear();
             if (SortBySelector.SelectedItem.TabIndex == 4)
                 Random.Shared.Shuffle(list);
             else
@@ -61,20 +86,16 @@ namespace Resolved.Controls
         }
         private void PushProblems(ResolvedProblem[] list)
         {
-            ProblemCollection.Clear();
-            if (ascending)
-            {
-                for (int i = 0 ; i < list.Length ; i++)
-                    ProblemCollection.Add(list[i]);
-            }
-            else
-            {
-                for (int i = list.Length - 1 ; i >= 0 ; i--)
-                    ProblemCollection.Add(list[i]);
-            }
+            if (ProblemsListView == null)
+                return;
+            //수만 개를 하나씩 Add하면 그만큼 CollectionChanged가 발생하므로 목록을 통째로 교체한다.
+            //같은 배열을 다시 넣으면 갱신되지 않으므로 항상 새 배열을 만든다.
+            ProblemsListView.ItemsSource = ascending ? list.ToArray() : list.AsEnumerable().Reverse().ToArray();
         }
         private void SortBySelector_SelectionChanged(SelectorBar sender , SelectorBarSelectionChangedEventArgs args)
         {
+            if (sender.SelectedItem == null)
+                return;
             int now = sender.SelectedItem.TabIndex;
             if (now > 4)
             {
@@ -91,31 +112,23 @@ namespace Resolved.Controls
             UpdateProblems(Cache);
         }
 
-        private ObservableCollection<ResolvedProblem> ProblemCollection { get; set; } = [];
-
         readonly SolidColorBrush GreenColor = new("#009f6b".ToColor());
         readonly SolidColorBrush RedColor = new("#e74c3c".ToColor());
+        readonly SolidColorBrush DefaultColor = new(Microsoft.UI.Colors.DarkSlateGray);
 
         private void ProblemIdTextBlock_DataContextChanged(FrameworkElement sender , DataContextChangedEventArgs args)
         {
-            if (CurrentUser == null)
+            if (args.NewValue is not ResolvedProblem info)
                 return;
 
+            //ListView는 항목 컨테이너를 재활용하므로 이전 색이 남지 않게 항상 다시 지정한다.
             var me = (TextBlock)sender;
-            var info = me.DataContext as ResolvedProblem;
-            if (info == null)
-            {
-                return;
-            }
-
-            if (CurrentUser.AcceptProblems.Contains(info.ProblemId))
-            {
+            if (acceptedProblems.Contains(info.ProblemId))
                 me.Foreground = GreenColor;
-            }
-            else if (CurrentUser.FailedProblems.Contains(info.ProblemId))
-            {
+            else if (failedProblems.Contains(info.ProblemId))
                 me.Foreground = RedColor;
-            }
+            else
+                me.Foreground = DefaultColor;
         }
 
         private void BookmarkButton_Click(object sender , RoutedEventArgs e)
@@ -144,44 +157,8 @@ namespace Resolved.Controls
             _ = Launcher.LaunchUriAsync(new("https://noj.am/" + ((ResolvedProblem)ProblemsListView.SelectedItem).ProblemId));
         }
 
-        //private void BookmarkButton_DataContextChanged(FrameworkElement sender , DataContextChangedEventArgs args)
-        //{
-        //    var me = (ToggleButton)sender;
-        //    if (ProblemsListView.SelectedItem is not ResolvedProblem problem)
-        //    {
-        //        me.IsEnabled = false;
-        //        return;
-        //    }
-
-        //    me.IsEnabled = true;
-        //    bool include = Database.Bookmarks.FindById(problem.ProblemId) != null;
-        //    me.IsChecked = include;
-        //    //if (include)
-        //    //{
-        //    //    me.Content = "In Bookmarks";
-        //    //} else
-        //    //{
-        //    //    me.Content = "Add Bookmarks";
-        //    //}
-        //}
-
-        //private void OpenButton_DataContextChanged(FrameworkElement sender , DataContextChangedEventArgs args)
-        //{
-        //    var me = (Button)sender;
-        //    if (ProblemsListView.SelectedItem is not ResolvedProblem problem)
-        //    {
-        //        me.IsEnabled = false;
-        //        return;
-        //    }
-
-        //    me.IsEnabled = true;
-        //}
-
         private void ProblemsListView_SelectionChanged(object sender , SelectionChangedEventArgs e)
         {
-            var me = (ListView)sender;
-            Debug.WriteLine($"selection changed: {e.RemovedItems.FirstOrDefault("null").GetType()} -> {e.AddedItems.FirstOrDefault("null").GetType()}");
-
             if (e.AddedItems.FirstOrDefault() is not ResolvedProblem problem)
             {
                 ProblemBookmarkButton.IsEnabled = false;
@@ -203,14 +180,18 @@ namespace Resolved.Controls
 
         private void ProblemSearchTextBox_TextChanged(object sender , TextChangedEventArgs e)
         {
-            string search = ProblemSearchTextBox.Text;
-            var filter = ProblemSource.Where(p => p.IsMatching(search)).ToArray();
-            UpdateProblems(filter);
+            ApplySearch();
         }
 
-        private void ProblemListViewLoading(FrameworkElement sender , object args)
+        private void ApplySearch()
         {
-            Cache = ProblemSource;
+            if (ProblemSearchTextBox == null || ProblemsListView == null)
+                return;
+            ReloadCurrentUser();
+            ResolvedProblem[] source = ProblemSource ?? [];
+            string search = ProblemSearchTextBox.Text;
+            //정렬이 원본 배열을 바꾸지 않도록 항상 복사본을 넘긴다.
+            UpdateProblems(search.Length == 0 ? (ResolvedProblem[])source.Clone() : source.Where(p => p.IsMatching(search)).ToArray());
         }
     }
 }

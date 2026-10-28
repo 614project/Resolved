@@ -38,9 +38,9 @@ namespace Resolved.Controls
             else
                 Array.Sort(list , SortOptions[SortBySelector.SelectedItem.TabIndex]);
 
-            PushProblems(list);
+            PushUsers(list);
         }
-        private void PushProblems(ResolvedUser[] list)
+        private void PushUsers(ResolvedUser[] list)
         {
             UserCollection.Clear();
             if (ascending)
@@ -56,6 +56,8 @@ namespace Resolved.Controls
         }
         private void SortBySelector_SelectionChanged(SelectorBar sender , SelectorBarSelectionChangedEventArgs args)
         {
+            if (sender.SelectedItem == null)
+                return;
             int now = sender.SelectedItem.TabIndex;
             if (now > 4)
             {
@@ -65,7 +67,7 @@ namespace Resolved.Controls
             }
             if (now == prevIndex)
             {
-                PushProblems(Cache);
+                PushUsers(Cache);
                 return;
             }
             prevIndex = now;
@@ -91,18 +93,6 @@ namespace Resolved.Controls
         public int SelectedIndex {
             get => UsersListView.SelectedIndex;
             set => UsersListView.SelectedIndex = value;
-        }
-
-        private void DownloadStatusTextBlock_DataContextChanged(FrameworkElement sender , DataContextChangedEventArgs args)
-        {
-            if (args.NewValue is not ResolvedUser info)
-                return;
-            var me = (TextBlock)sender;
-
-            me.Text = info.LastDownloadMessage;
-            info.OnDownloadStatusChanged += (_ , msg) => {
-                DispatcherQueue.TryEnqueue(() => me.Text = msg);
-            };
         }
     }
 }

@@ -1,9 +1,7 @@
-﻿using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Media;
+﻿using Microsoft.UI.Xaml.Media;
 using Newtonsoft.Json;
-using Resolved.Collections;
 using System;
-using System.IO;
+using System.Diagnostics;
 using static Resolved.Scripts.JsonManager;
 
 namespace Resolved.Scripts;
@@ -11,10 +9,12 @@ namespace Resolved.Scripts;
 class Configuration
 {
     /// <summary>
-    /// 1. acrylic, 2. mica, 3. mica alt
+    /// 0. none, 1. acrylic, 2. mica, 3. mica alt
     /// </summary>
-    public int backdrop { get; set; } = 3;
-    public string? currentUser { get; set; } = null;
+    [JsonProperty("backdrop")]
+    public int Backdrop { get; set; } = 3;
+    [JsonProperty("currentUser")]
+    public string? CurrentUser { get; set; } = null;
 
     public static Configuration Config => _conf;
     private static Configuration _conf = new();
@@ -24,17 +24,22 @@ class Configuration
     }
     public static void Save()
     {
-        Write(Config , "config.json");
+        try
+        {
+            Write(Config , "config.json");
+        } catch (Exception ex)
+        {
+            Debug.WriteLine($"Failed to save configuration: {ex}");
+        }
     }
 
     public static void BackdropUpdate()
     {
-        App.MainWindow.SystemBackdrop = Config.backdrop switch {
+        App.MainWindow.SystemBackdrop = Config.Backdrop switch {
             1 => new DesktopAcrylicBackdrop(),
             2 => new MicaBackdrop(),
             3 => new MicaBackdrop() { Kind = Microsoft.UI.Composition.SystemBackdrops.MicaKind.BaseAlt },
             _ => MainWindow.DefaultBackdrop
         };
     }
-    public static string? CurrentUser => _conf.currentUser;
 }
