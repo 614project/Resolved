@@ -99,7 +99,7 @@ jobs:
       - name: Package
         shell: pwsh
         run: |
-          foreach ($required in 'Resolved.exe', 'Resolved.pri', 'Assets/Fonts/Outfit.ttf', 'Assets/Fonts/SUIT.ttf') {
+          foreach ($required in 'Resolved.exe', 'resources.pri', 'Assets/Fonts/Outfit.ttf', 'Assets/Fonts/SUIT.ttf') {
             if (-not (Test-Path (Join-Path 'publish/win-x64' $required))) {
               throw "The publish output does not contain $required."
             }
