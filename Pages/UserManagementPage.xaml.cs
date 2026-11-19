@@ -63,7 +63,7 @@ namespace Resolved.Pages
             AddUser.StartBringIntoView();
         }
 
-        private void DebouncerOnResult(object? sender , SolvedSocialUser? user)
+        private void DebouncerOnResult(object? sender , SolvedUser? user)
         {
             bool alreadyExist = user != null && users.ContainsKey(user.Handle);
             predictAddUser = alreadyExist ? null : user;
@@ -78,7 +78,7 @@ namespace Resolved.Pages
             Debug.WriteLine(ex.Message);
             predictAddUser = null;
             AddUser.IsEnabled = false;
-            SearchStatus.Text = "Search failed";
+            SearchStatus.Text = ex is MissingCredentialsException ? "Set solved.ac API key in Settings" : "Search failed";
         }
 
         private void UserManagementPage_Unloaded(object sender , RoutedEventArgs e)
@@ -93,16 +93,16 @@ namespace Resolved.Pages
             mySelectBarItem.IsSelected = true;
         }
 
-        readonly Debouncer<string,SolvedSocialUser?> debouncer = new(
-            async (name , _) => {
-                (SolvedSocialUser? user, Exception? ex) = await ResolvedInfo.API.GetUserAsync(Uri.EscapeDataString(name));
+        readonly Debouncer<string,SolvedUser?> debouncer = new(
+            async (name , token) => {
+                (SolvedUser? user, Exception? ex) = await ResolvedInfo.API.GetUserAsync(name , token);
                 if (ex is not null and not SolvedAPIException { StatusCode: HttpStatusCode.NotFound })
                     throw ex;
                 return user;
             },
             TimeSpan.FromMilliseconds(300)
         );
-        SolvedSocialUser? predictAddUser = null;
+        SolvedUser? predictAddUser = null;
         private void AddUser_Click(object sender , RoutedEventArgs e)
         {
             if (predictAddUser == null)

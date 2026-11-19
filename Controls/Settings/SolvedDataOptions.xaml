@@ -10,6 +10,17 @@
     mc:Ignorable="d">
     <ui:SettingsExpander Header="BOJ/solved.ac data management" Description="Manage problems and user data." FontFamily="Outfit" IsExpanded="True">
         <ui:SettingsExpander.Items>
+            <ui:SettingsCard Header="solved.ac API key" Description="solved.ac API v4 needs an application client ID and secret. Register an application at solved.ac Backstage and enter them here. They are stored only on this PC." FontFamily="Outfit">
+                <StackPanel Orientation="Vertical" Spacing="4" MinWidth="240">
+                    <TextBox x:Name="ClientIdBox" PlaceholderText="Client ID" FontFamily="Outfit"/>
+                    <PasswordBox x:Name="ClientSecretBox" PlaceholderText="Client secret" FontFamily="Outfit"/>
+                    <StackPanel Orientation="Horizontal" Spacing="4" HorizontalAlignment="Right">
+                        <TextBlock x:Name="CredentialsStatus" VerticalAlignment="Center" FontFamily="Outfit"/>
+                        <Button Content="Open Backstage" Click="OpenBackstage_Click" FontFamily="Outfit" ToolTipService.ToolTip="Open solved.ac Backstage to register an application."/>
+                        <Button Content="Save" Click="SaveCredentials_Click" FontFamily="Outfit" Style="{StaticResource AccentButtonStyle}"/>
+                    </StackPanel>
+                </StackPanel>
+            </ui:SettingsCard>
             <ui:SettingsCard Header="Problems download" Description="Download all problems from BOJ/solved.ac. Then overwrite and update." FontFamily="Outfit">
                 <local:DownloadOption/>
             </ui:SettingsCard>

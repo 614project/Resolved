@@ -45,7 +45,7 @@
                         </Grid.ColumnDefinitions>
                         <TextBlock Text="{x:Bind GetTierName}" Foreground="{x:Bind GetTierColor}" Grid.Column="0" FontFamily="Outfit" VerticalAlignment="Center"/>
                         <TextBlock x:Name="ProblemIdTextBlock" DataContextChanged="ProblemIdTextBlock_DataContextChanged" Text="{x:Bind ProblemId}" Grid.Column="1" Foreground="DarkSlateGray" FontFamily="Outfit" VerticalAlignment="Center"/>
-                        <TextBlock x:Name="ProblemTitleTextBlock" Text="{x:Bind GetTitle()}" Grid.Column="2" FontFamily="SUIT" VerticalAlignment="Center"/>
+                        <TextBlock x:Name="ProblemTitleTextBlock" Text="{x:Bind GetDisplayTitle()}" Grid.Column="2" FontFamily="SUIT" VerticalAlignment="Center"/>
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>

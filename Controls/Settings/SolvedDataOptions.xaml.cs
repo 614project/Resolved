@@ -34,6 +34,7 @@ namespace Resolved.Controls.Settings
         {
             ResolvedInfo.OnDataChanged += this.ResolvedInfo_OnDataChanged;
             UpdateStatus();
+            LoadCredentials();
         }
 
         private void SolvedDataOptions_Unloaded(object sender , RoutedEventArgs e)
@@ -50,6 +51,29 @@ namespace Resolved.Controls.Settings
         {
             LastWriteTimeCard.Content = LastWriteTime;
             CurrentUserCard.Content = CurrentUserText;
+        }
+
+        private void LoadCredentials()
+        {
+            ClientIdBox.Text = Configuration.Config.ClientId ?? string.Empty;
+            ClientSecretBox.Password = Configuration.Config.ClientSecret ?? string.Empty;
+            CredentialsStatus.Text = ResolvedInfo.HasCredentials ? string.Empty : "Not set";
+        }
+
+        private void SaveCredentials_Click(object sender , RoutedEventArgs e)
+        {
+            string id = ClientIdBox.Text.Trim();
+            string secret = ClientSecretBox.Password.Trim();
+            Configuration.Config.ClientId = id.Length == 0 ? null : id;
+            Configuration.Config.ClientSecret = secret.Length == 0 ? null : secret;
+            Configuration.Save();
+            ResolvedInfo.ResetAPI();
+            CredentialsStatus.Text = ResolvedInfo.HasCredentials ? "Saved" : "Not set";
+        }
+
+        private void OpenBackstage_Click(object sender , RoutedEventArgs e)
+        {
+            "https://backstage.solved.ac/developer".OpenToBrowser();
         }
 
         private string DataSavePath => JsonManager.SaveFolder;
