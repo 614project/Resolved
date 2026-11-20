@@ -15,6 +15,16 @@ class Configuration
     public int Backdrop { get; set; } = 3;
     [JsonProperty("currentUser")]
     public string? CurrentUser { get; set; } = null;
+    /// <summary>
+    /// solved.ac Backstage에서 발급받은 애플리케이션 클라이언트 ID (solved.ac API v4)
+    /// </summary>
+    [JsonProperty("clientId")]
+    public string? ClientId { get; set; } = null;
+    /// <summary>
+    /// solved.ac Backstage에서 발급받은 애플리케이션 클라이언트 시크릿 (solved.ac API v4)
+    /// </summary>
+    [JsonProperty("clientSecret")]
+    public string? ClientSecret { get; set; } = null;
 
     public static Configuration Config => _conf;
     private static Configuration _conf = new();

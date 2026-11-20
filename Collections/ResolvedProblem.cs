@@ -1,44 +1,52 @@
 ﻿using AcNET.Problem;
-using LiteDB;
 using System;
 using System.Linq;
 
 namespace Resolved.Collections;
 
-public class ResolvedProblem : SolvedTaggedProblem
+/// <summary>
+/// DB에 저장하는 문제입니다. LiteDB의 _id는 <see cref="SolvedProblemRef.ProblemId"/>입니다. (<see cref="Scripts.Database.ConfigureMapper"/> 참고)
+/// </summary>
+public class ResolvedProblem : SolvedProblem
 {
-    [BsonId]
-    public int Id { get => ProblemId; set => ProblemId = value; }
-
     public ResolvedProblem() { }
-    public ResolvedProblem(SolvedTaggedProblem problem)
+    public ResolvedProblem(SolvedProblem problem)
     {
+        //SolvedProblemRef
         this.ProblemId = problem.ProblemId;
-        this.TitleKo = problem.TitleKo ?? string.Empty;
-        this.Titles = problem.Titles;
-        this.IsSolvable = problem.IsSolvable;
-        this.IsPartial = problem.IsPartial;
-        this.AcceptedUserCount = problem.AcceptedUserCount;
+        this.SubId = problem.SubId;
+        this.JudgeIds = problem.JudgeIds;
         this.Level = problem.Level;
-        this.VotedUserCount = problem.VotedUserCount;
-        this.Sprout = problem.Sprout;
+        this.EffectiveVoteCount = problem.EffectiveVoteCount;
         this.GivesNoRating = problem.GivesNoRating;
-        this.IsLevelLocked = problem.IsLevelLocked;
-        this.AverageTries = problem.AverageTries;
-        this.Official = problem.Official;
+        this.IsStandard = problem.IsStandard;
+        //SolvedProblemSummary
+        this.Titles = problem.Titles;
+        //SolvedProblem
+        this.Id = problem.Id;
+        this.LevelAverage = problem.LevelAverage;
+        this.LevelStdev = problem.LevelStdev;
+        this.VotedUserCount = problem.VotedUserCount;
+        this.SolvedUserCount = problem.SolvedUserCount;
+        this.NoRatingReasons = problem.NoRatingReasons;
+        this.NoRatingWarnings = problem.NoRatingWarnings;
+        this.Contests = problem.Contests;
         this.Tags = problem.Tags;
+        //사용자 토큰에 따라 달라지는 값(UserStatus, ViewerFolders)은 저장하지 않는다.
     }
 
-    public string GetTitle()
+    /// <summary>
+    /// 한국어 제목을 우선으로, 없으면 원문 제목을 돌려줍니다.
+    /// </summary>
+    public string GetDisplayTitle()
     {
-        if (!string.IsNullOrEmpty(TitleKo))
-            return TitleKo;
-        return Titles?.Select(t => t.Title).FirstOrDefault(title => !string.IsNullOrEmpty(title)) ?? string.Empty;
+        if (Titles == null || Titles.Count == 0)
+            return string.Empty;
+        return GetTitle("ko") ?? string.Empty;
     }
     public bool IsMatching(string pattern)
     {
-        return (TitleKo?.Contains(pattern , StringComparison.OrdinalIgnoreCase) ?? false)
-            || (Titles?.Any(x => x.Title?.Contains(pattern , StringComparison.OrdinalIgnoreCase) ?? false) ?? false)
+        return (Titles?.Any(x => x.Title?.Contains(pattern , StringComparison.OrdinalIgnoreCase) ?? false) ?? false)
             || ProblemId.ToString().Contains(pattern);
     }
 }

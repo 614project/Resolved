@@ -16,13 +16,12 @@ public class ResolvedUser : INotifyPropertyChanged
     {
         User = new();
     }
-    public ResolvedUser(SolvedSocialUser user) { this.User = user; }
+    public ResolvedUser(SolvedUser user) { this.User = user; }
 
     [BsonId]
     public string Handle { get => User.Handle; set => User.Handle = value; }
 
-    public SolvedSocialUser User { get; set; }
-    public SolvedAdditionalInformation? Additional { get; set; }
+    public SolvedUser User { get; set; }
     public List<int> AcceptProblems { get; set; } = [];
     public List<int> FailedProblems { get; set; } = [];
     public DateTime LastDownloadTime { get; set; }
@@ -39,7 +38,7 @@ public class ResolvedUser : INotifyPropertyChanged
     }
 
     [BsonIgnore]
-    public string Bio => User.Bio;
+    public string Bio => User.Bio ?? string.Empty;
     [BsonIgnore]
     public string MaxStreakText => $"Max {User.MaxStreak} day streak";
     [BsonIgnore]
@@ -47,7 +46,7 @@ public class ResolvedUser : INotifyPropertyChanged
     [BsonIgnore]
     public string TierAndRatingText => $"{User.GetTierName} {User.Rating}";
     [BsonIgnore]
-    public string GetTierColor => User.GetTierColor ?? "#000000";
+    public string GetTierColor => User.GetTierColor;
     [BsonIgnore]
     public bool CanDownload => downloadTask == null;
     [BsonIgnore]
@@ -111,24 +110,15 @@ public class ResolvedUser : INotifyPropertyChanged
         try
         {
             string handle = User.Handle;
-            string escapedHandle = Uri.EscapeDataString(handle);
             DateTime startDownload = DateTime.Now;
-            Exception? ex;
-            //유저 기본 정보
-            (var user, ex) = await ResolvedInfo.API.GetUserAsync(escapedHandle).ConfigureAwait(false);
-            if (user == null)
-                return ex ?? new Exception("Failed to download user information.");
-            //추가 정보
-            (var addition, ex) = await ResolvedInfo.API.GetUserAdditionalInfoAsync(escapedHandle).ConfigureAwait(false);
-            if (addition == null)
-                return ex ?? new Exception("Failed to download additional information.");
+            //유저 정보 (API v4에서는 추가 정보가 Metadata로 함께 온다)
+            SolvedUser user = await ResolvedInfo.CallAsync(api => api.GetUserAsync(handle)).ConfigureAwait(false);
             //맞은 문제 (페이지네이션으로 전체 조회)
             List<int> accepted = await ResolvedInfo.SearchProblemIdsAsync($"s@{handle}").ConfigureAwait(false);
             //실패한 문제 (페이지네이션으로 전체 조회)
             List<int> failed = await ResolvedInfo.SearchProblemIdsAsync($"t@{handle} -s@{handle}").ConfigureAwait(false);
             //성공!
             this.User = user;
-            this.Additional = addition;
             this.AcceptProblems = accepted;
             this.FailedProblems = failed;
             LastDownloadTime = startDownload;

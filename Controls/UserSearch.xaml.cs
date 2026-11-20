@@ -40,40 +40,49 @@ namespace Resolved.Controls
         private ObservableCollection<string> SuggestKeywords { get; } = new();
         private async void HandleTextChanged(AutoSuggestBox sender , AutoSuggestBoxTextChangedEventArgs args)
         {
-            (var suggest, _) = await ResolvedInfo.API.GetSearchAutoCompleteAsync(sender.Text);
-            if (suggest != null)
+            string text = sender.Text;
+            if (string.IsNullOrWhiteSpace(text) || !ResolvedInfo.HasCredentials)
+                return;
+            try
             {
-                SuggestKeywords.Clear();
-                foreach(var user in suggest.Users)
+                //사용자명 접두사 검색 (2자 미만이면 결과 없음)
+                (var suggest, _) = await ResolvedInfo.API.GetSearchUserAsync(text);
+                if (suggest != null)
                 {
-                    SuggestKeywords.Add(user.Handle);
+                    SuggestKeywords.Clear();
+                    foreach (var user in suggest.Items)
+                    {
+                        SuggestKeywords.Add(user.Handle);
+                    }
                 }
-            }
 
-            (var info, _) = await ResolvedInfo.API.GetUserAsync(Handle.Text.ToLower());
-            if (info != null)
+                (var info, _) = await ResolvedInfo.API.GetUserAsync(text);
+                if (info != null)
+                {
+                    DispatcherQueue.TryEnqueue(() => {
+                        if (info.ProfileImageUrl == null)
+                            Profile.ProfilePicture = null;
+                        else
+                            Profile.ProfilePicture = new BitmapImage(new Uri(info.ProfileImageUrl));
+
+                        Tier.Text = $"{info.GetTierName} {info.Rating}";
+                        Bio.Text = info.Bio ?? string.Empty;
+
+                        SolidColorBrush color = new(info.GetTierColor.ToColor());
+                        Tier.Foreground = color;
+                        RatingBar.Foreground = color;
+
+                        //API v4에서는 배경 정보가 사용자 정보에 함께 온다.
+                        string? background = info.Background?.BackgroundImageUrl;
+                        if (string.IsNullOrEmpty(background))
+                            BackgroundImage.Source = null;
+                        else
+                            BackgroundImage.Source = new BitmapImage(new Uri(background));
+                    });
+                }
+            } catch (Exception ex)
             {
-                DispatcherQueue.TryEnqueue(() => {
-                    if (info.ProfileImageUrl == null)
-                        Profile.ProfilePicture = null;
-                    else
-                        Profile.ProfilePicture = new BitmapImage(new Uri(info.ProfileImageUrl));
-
-                    Tier.Text = $"{info.GetTierName} {info.Rating}";
-                    Bio.Text = info.Bio;
-
-                    SolidColorBrush color = new((info.GetTierColor ?? "#000000").ToColor());
-                    Tier.Foreground = color;
-                    RatingBar.Foreground = color;
-                });
-
-                (var background, _) = await ResolvedInfo.API.GetBackgroundAsync(info.BackgroundId);
-                DispatcherQueue.TryEnqueue(() => {
-                    if (background == null)
-                        BackgroundImage.Source = null;
-                    else
-                        BackgroundImage.Source = new BitmapImage(new Uri(background.BackgroundImageUrl));
-                });
+                System.Diagnostics.Debug.WriteLine(ex.Message);
             }
         }
     }

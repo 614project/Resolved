@@ -67,8 +67,8 @@ namespace Resolved.Controls
         readonly Comparer<ResolvedProblem>[] SortOptions = [
             Comparer<ResolvedProblem>.Create((a , b) => a.ProblemId.CompareTo(b.ProblemId)),
             Comparer<ResolvedProblem>.Create((a,b) => a.Level.CompareTo(b.Level)),
-            Comparer<ResolvedProblem>.Create((a , b) => a.GetTitle().CompareTo(b.GetTitle())),
-            Comparer<ResolvedProblem>.Create((a, b) => a.AcceptedUserCount.CompareTo(b.AcceptedUserCount))
+            Comparer<ResolvedProblem>.Create((a , b) => a.GetDisplayTitle().CompareTo(b.GetDisplayTitle())),
+            Comparer<ResolvedProblem>.Create((a, b) => a.SolvedUserCount.CompareTo(b.SolvedUserCount))
         ];
 
         private ResolvedProblem[] Cache = [];
@@ -175,7 +175,7 @@ namespace Resolved.Controls
 
             ProblemBookmarkButton.IsChecked = Database.Bookmarks.FindById(problem.ProblemId) != null;
 
-            ProblemDetailText.Text = $"Average tried count: {problem.AverageTries}, Accepted user count: {problem.AcceptedUserCount}";
+            ProblemDetailText.Text = $"Solved user count: {problem.SolvedUserCount}, Voted user count: {problem.VotedUserCount}";
         }
 
         private void ProblemSearchTextBox_TextChanged(object sender , TextChangedEventArgs e)

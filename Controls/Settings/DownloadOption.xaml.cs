@@ -51,6 +51,8 @@ namespace Resolved.Controls.Settings
             DispatcherQueue.TryEnqueue(() => {
                 if (e == null)
                     MyButton.Content = "Download success.";
+                else if (e is MissingCredentialsException)
+                    MyButton.Content = "Set solved.ac API key first.";
                 else
                     MyButton.Content = "Download Failed.";
                 MyProgress.Visibility = Visibility.Collapsed;
